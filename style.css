@@ -1,0 +1,278 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Play", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url(./img/carpet.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-weight: 400;
+    font-style: normal;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+/* Градиент поверх фона */
+.gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255, 166, 88, 0.9), rgba(189, 222, 143, 0.9));
+    background-blend-mode: overlay;
+    z-index: -1;
+}
+
+.navbar {
+    background-color: #FFF890 !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 2em;
+}
+
+.nav-link {
+    color: #333;
+    font-size: 16px;
+}
+
+.nav-link:hover, .current {
+    color: #252525  !important;
+    text-decoration: underline;
+    text-underline-offset: .25em;
+}
+
+.logout-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.logout-btn:hover {
+    background-color: #b02a37;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin: 1em 0;
+    text-align: center;
+    color: #fafafa;
+    font-weight: bold;
+}
+
+/* Стили для формы */
+.form-container {
+    text-align: center;
+    background-color: rgba(61, 61, 61, 0.25);
+    padding: 2em 4em;
+    border-radius: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    width: 460px;
+}
+
+.btn-register {
+    background-color: #CFFA91;
+    color: #252525;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btn-register:hover {
+    background-color: #fdd900;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.tab {
+    padding: 0.4em 2em;
+    cursor: pointer;
+    font-size: 18px;
+    color: #fff;
+    margin-right: 10px;
+    border-radius: 12px;
+}
+
+.tab.active {
+    background-color: #fafafa;
+    color: #252525;
+}
+
+.tab.active {
+    background-color: #fafafa;
+    color: #252525;
+}
+
+form {
+    display: inline-block;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav {
+        justify-content: center;
+    }
+}
+
+/* Стили для панели профиля */
+.profile-container {
+    display: flex;
+    gap: 20px;
+    margin: 2em;
+    height: calc(100vh - 10em);
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    background-color: rgba(61, 61, 61, 0.25);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    align-items: center;
+}
+
+.avatar {
+    display: flex;
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    border-radius: 12px;
+}
+
+.left-panel img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.left-panel h3, .right-panel h2 {
+    margin: 10px 30px 5px 30px;
+    font-size: 1.9em;
+    font-weight: bold;
+    color: #ECF9DB;
+}
+
+.left-panel p {
+    font-size: 14px;
+    color: #ECF9DB;
+}
+
+.left-panel .stats {
+    margin: 20px 30px;
+    width: 100%;
+}
+
+.left-panel .stat-item {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ECF9DB;
+    color: #333;
+    padding: 30px 24px;
+    border-radius: 12px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.left-panel .stat-item strong {
+    text-align: right;
+    font-weight: bold;
+    color: #70B70C;
+}
+
+.right-panel {
+    flex: 1;
+    background-color:rgba(61, 61, 61, 0.25);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.room-info {
+    background-color: #ECF9DB;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 10px 30px;
+    width: 30vw;
+}
+
+.room-info p {
+    font-size: 14px;
+    color: #333;
+}
+.room-cont {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0 30px;
+}
+
+.friends-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin: 10px 30px;
+}
+
+.friend-card {
+    background-color: #ECF9DB;
+    border-radius: 12px;
+    text-align: center;
+    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.fr_avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px 0 0 12px;
+    background-color: #fff;
+}
+
+.friend-card img {
+    width: 100%;
+    border-radius: 12px 0 0 12px;
+    object-fit: cover;
+}
+
+.friend-card .actions {
+    margin: 30px;
+}
+
+.friend-card .action-btn {
+    color: #4b4b4b;
+    cursor: pointer;
+    font-size: 12px;
+}
