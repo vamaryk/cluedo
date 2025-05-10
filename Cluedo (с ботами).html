@@ -271,6 +271,38 @@
             background-color: rgb(255, 213, 0);
             cursor: pointer;
         }
+
+        #playerCards {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #cardsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .card-item {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .card-item img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -296,6 +328,11 @@
     </div>
 
     <button id="endTurnButton" style="display: none;">Завершить ход</button>
+
+    <div id="playerCards" style="display: none;">
+        <h3>Ваши карты:</h3>
+        <div id="cardsContainer"></div>
+    </div>
 
     <!-- Модальное окно для сообщения -->
     <div id="modal">
@@ -405,6 +442,8 @@
         const endTurnButton = document.getElementById("endTurnButton");
         const modal = document.getElementById("modal");
         const modalButton = document.getElementById("modalButton");
+
+        const playerCards = document.getElementById("playerCards");
 
         // Поиск, какие клетки (ID) относятся к указанной комнате
         function fetchRoomCellsByRoomName(roomName) {
@@ -768,14 +807,42 @@
         }
 
         // Обработчик кнопки "Начать игру"
-        startButton.addEventListener("click", () => {
-            startButton.style.display = "none"; // Скрыть кнопку "Начать игру"
-            rollDiceButton.style.display = "inline-block";
-            endTurnButton.style.display = "inline-block"; // Показать кнопку "Завершить ход"
-            currentPlayer = "player"; // Игрок начинает первый ход
-            isGameStarted = true;
-            renderBoard();
-        });
+        startButton.addEventListener("click", async () => {
+        startButton.style.display = "none";
+        rollDiceButton.style.display = "inline-block";
+        endTurnButton.style.display = "inline-block";
+        playerCards.style.display = "inline-block";
+        currentPlayer = "player"; // Игрок начинает первый ход
+        isGameStarted = true;
+
+        try {
+            // Отправка запроса на создание игры
+            const response = await fetch("createGameSession.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    playerID: 5, // ID пользователя
+                    bots: bots.map(bot => bot.id)
+                })
+            });
+
+            if (!response.ok) throw new Error("Ошибка при создании игры");
+
+            const data = await response.json();
+            console.log("Игра создана:", data);
+
+            // Отображение карт игрока
+            displayPlayerCards(data.playerCards);
+
+        } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Не удалось создать игру");
+        }
+
+        renderBoard();
+    });
 
         // Обработчик кнопки "Завершить ход"
         endTurnButton.addEventListener("click", () => {
@@ -786,6 +853,20 @@
                 botMove(); // Перемещает первого бота
             }
         });
+
+        function displayPlayerCards(cards) {
+        const container = document.getElementById("cardsContainer");
+        container.innerHTML = "";
+
+        cards.forEach(card => {
+            const cardDiv = document.createElement("div");
+            cardDiv.className = "card-item";
+            cardDiv.innerHTML = `
+                <img src="${card.image}" alt="${card.name}" width="60" height="60" style="margin-bottom: 5px;">
+            `;
+            container.appendChild(cardDiv);
+        });
+    }
 
         // Массив эмодзи для костей (Unicode символы ⚀-⚅)
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -800,6 +881,7 @@
         let possibleMoves = [];
         let isDiceRolled = false; // Флаг, что кости подброшены
         let isPlayerTurn = false; // Флаг, что сейчас ход игрока
+        let isMoveCompleted = false; // Флаг, что игрок завершил ход
 
         // Функция броска костей
         rollDiceButton.addEventListener("click", () => {
@@ -807,12 +889,12 @@
             const d1 = Math.floor(Math.random() * 6) + 1;
             const d2 = Math.floor(Math.random() * 6) + 1;
 
-            // Отображение эмодзи вместо чисел
             dice1El.textContent = diceSymbols[d1 - 1];
             dice2El.textContent = diceSymbols[d2 - 1];
 
             diceSum = d1 + d2;
             diceSumEl.textContent = diceSum;
+            diceSum_cont.style.display = "block";
 
             highlightPossibleMoves(diceSum);
             isDiceRolled = true;
@@ -830,7 +912,7 @@
             let exits = [];
 
             if (isCurrentRoom) {
-                // Найти выходы из комнаты
+                // надо исправить
                 const directions = [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }];
                 directions.forEach(({ dx, dy }) => {
                     const nx = startX + dx, ny = startY + dy;
@@ -910,6 +992,7 @@
                 dice1El.textContent = '⚀';
                 dice2El.textContent = '⚀';
                 diceSum_cont.style.display = "none";
+                isMoveCompleted = true; // Ход завершён
 
                 // Проверка комнаты и кнопок
                 const cellId = matrix[playerPos.y][playerPos.x];
@@ -917,8 +1000,12 @@
                 if (cellType === "room") {
                     showSuggestButton();
                 } else {
-                    // Логика перехода хода (заглушка)
-                    alert("Ход завершен. Переход хода.");
+                    if (currentPlayer === "player") {
+                        // Игрок завершил ход
+                        currentPlayer = currentBot; // Следующий ход - первый бот
+                        endTurnButton.style.display = "none";
+                        botMove(); // Перемещает первого бота
+            }
                 }
                 showSecretPathButton();
             }
@@ -1024,14 +1111,10 @@
 
         // Управление движением игрока
         document.addEventListener("keydown", (e) => {
-
-            // Если игра не началась, движение игрока запрещено
-            if (!isGameStarted) return;
-
-            // Блокирует движение игрока, если бот в движении
-            if (isBotMoving) return;
+            if (!isGameStarted || isMoveCompleted || isBotMoving) return;
 
             let { x, y } = playerPos;
+
             if (e.key === "ArrowUp" || e.key === "w") y--;
             if (e.key === "ArrowDown" || e.key === "s") y++;
             if (e.key === "ArrowLeft" || e.key === "a") x--;
@@ -1043,6 +1126,20 @@
                 renderBoard();
                 showSuggestButton();
                 showSecretPathButton();
+
+                // Сброс возможных ходов
+                document.querySelectorAll(".cell.highlight").forEach(cell => {
+                    cell.classList.remove("highlight");
+                    cell.removeEventListener("click", handleCellClick);
+                });
+
+                diceSum = 0;
+                dice1El.textContent = '⚀';
+                dice2El.textContent = '⚀';
+                diceSum_cont.style.display = "none";
+                rollDiceButton.disabled = true;
+                isDiceRolled = false;
+                isMoveCompleted = true;
             }
         });
 
