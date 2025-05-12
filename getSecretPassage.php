@@ -2,7 +2,7 @@
 require 'db.php';
 
 if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);  // Защита от SQL-инъекций
+    $id = intval($_GET['id']);
 
     $stmt = $pdo->prepare("SELECT Destination FROM SecretPassages WHERE SecretPassageID = ?");
     $stmt->execute([$id]);

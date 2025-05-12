@@ -6,7 +6,6 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 $data = json_decode(file_get_contents('php://input'), true);
-
 if (!isset($data['playerID']) || !isset($data['bots']) || !is_array($data['bots'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Неверные данные']);
@@ -16,7 +15,7 @@ if (!isset($data['playerID']) || !isset($data['bots']) || !is_array($data['bots'
 $humanPlayerID = $data['playerID'];
 $botIDs = array_values(array_unique($data['bots'])); // Удаление дубликатов
 
-// Исключаем игрока из списка ботов
+// Исключает игрока из списка ботов
 $botIDs = array_diff($botIDs, [$humanPlayerID]);
 
 try {
@@ -40,14 +39,21 @@ try {
         throw new Exception("Карты решения не уникальны");
     }
 
-    // --- 2. Вставка новой игры ---
+    // --- 2. Игроки новой игры ---
+    $players = array_merge([$humanPlayerID], $botIDs);
+    $playerCount = count($players); // Динамическое количество игроков
+    if ($playerCount < 3) {
+      throw new Exception("Должно быть минимум 3 игрока");
+    }
+
+    // --- 2.1. Вставка новой игры в БД---
     $stmt = $pdo->prepare("INSERT INTO Games 
         (GameHost, GameName, GamePlayersAmount, SolutionCharacter, SolutionWeapon, SolutionRoom) 
         VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $humanPlayerID,
         "Game_" . uniqid(),
-        5, // Всегда 5 игроков
+        $playerCount,
         $solution['Character'],
         $solution['Weapon'],
         $solution['Room']
@@ -55,14 +61,10 @@ try {
     $gameID = $pdo->lastInsertId();
 
     // --- 3. Очистка GameCards для всех игроков текущей игры ---
-    $players = array_merge([$humanPlayerID], $botIDs);
-    if (count($players) !== 5) {
-        throw new Exception("Должно быть ровно 5 игроков");
-    }
-
-    $placeholders = implode(',', array_fill(0, 5, '?')); // 5 вопросительных знаков
+    $allPossiblePlayers = range(1, 5); // Всегда 5 игроков с ID от 1 до 5
+    $placeholders = implode(',', array_fill(0, count($allPossiblePlayers), '?'));
     $stmt = $pdo->prepare("DELETE FROM GameCards WHERE CardPlayer IN ($placeholders)");
-    $stmt->execute($players);
+    $stmt->execute($allPossiblePlayers);
 
     // --- 4. Получение оставшихся карт ---
     $stmt = $pdo->prepare("SELECT ID FROM Cards WHERE ID NOT IN (?, ?, ?)");
@@ -71,27 +73,27 @@ try {
     $remainingCards = array_unique($remainingCards); // Удаление дубликатов
     shuffle($remainingCards); // Перемешивание карт
 
-    // --- 5. Распределение карт между 5 игроками ---
-    $chunkedCards = array_chunk($remainingCards, ceil(count($remainingCards) / 5));
-    $cardsPerPlayer = [];
-
-    for ($i = 0; $i < 5; $i++) {
-        $cardsPerPlayer[$i] = $chunkedCards[$i] ?? [];
+    // --- 5. Распределение карт между игроками ---
+    $cardsPerPlayer = array_fill(0, $playerCount, []); // Инициализация пустых массивов для каждого игрока
+    $cardsPerPlayerCount = floor(count($remainingCards) / $playerCount); // Сколько карт получит каждый игрок
+    $totalCardsToDistribute = $cardsPerPlayerCount * $playerCount; // Общее количество карт, которые будут распределены
+    $cardsToDistribute = array_slice($remainingCards, 0, $totalCardsToDistribute);
+    foreach ($cardsToDistribute as $index => $cardID) {
+        $playerIndex = $index % $playerCount; // Распределяет циклически по игрокам
+        $cardsPerPlayer[$playerIndex][] = $cardID;
     }
 
     // --- 6. Вставка карт в GameCards (без дубликатов) ---
     $stmtCheck = $pdo->prepare("SELECT 1 FROM GameCards WHERE CardPlayer = ? AND CardName = ?");
     $stmtInsert = $pdo->prepare("INSERT IGNORE INTO GameCards (CardPlayer, CardName) VALUES (?, ?)");
-
     $allAssignedCards = []; // Массив для отслеживания всех назначенных карт
-
     foreach ($players as $playerIndex => $currentPlayerID) {
         foreach ($cardsPerPlayer[$playerIndex] as $cardID) {
-            if (!in_array($cardID, $allAssignedCards)) { // Проверяем, была ли карта уже назначена
+            if (!in_array($cardID, $allAssignedCards)) { // Проверяет, была ли карта уже назначена
                 $stmtCheck->execute([$currentPlayerID, $cardID]);
                 if (!$stmtCheck->fetch()) {
                     $stmtInsert->execute([$currentPlayerID, $cardID]);
-                    $allAssignedCards[] = $cardID; // Добавляем карту в массив назначенных карт
+                    $allAssignedCards[] = $cardID; // Добавляет карту в массив назначенных карт
                 }
             }
         }
@@ -104,7 +106,6 @@ try {
                            WHERE gc.CardPlayer = ?");
     $stmt->execute([$humanPlayerID]);
     $playerCards = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $pdo->commit();
 
     // --- 8. Ответ клиенту ---

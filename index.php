@@ -32,7 +32,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
-                        <a class="nav-link current" href="#"><i class="fa fa-home"></i> комнаты</a>
+                        <a class="nav-link current" href="redirectToGame.php"><i class="fa fa-home"></i> комнаты</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Ссылки для авторизованных пользователей -->
@@ -55,6 +55,12 @@ if (isset($_SESSION['user_id'])) {
     </nav>
 
     <h1>Cluedo</h1>
+    <?php
+    if (isset($_SESSION['error'])) {
+        echo "<div class='alert alert-danger'>{$_SESSION['error']}</div>";
+        unset($_SESSION['error']); // Удаляем сообщение об ошибке после отображения
+    }
+    ?>
     <!-- Форма регистрации/авторизации -->
     <div class="form-container">
         <div class="tabs">
