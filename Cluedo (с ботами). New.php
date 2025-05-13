@@ -11,7 +11,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 30px;
+            margin: 20px;
             position: relative;
         }
 
@@ -80,14 +80,16 @@
 
         /* Кнопка предположения */
         #suggestButton {
-            margin-top: 20px;
-            padding: 15px 30px;
+            position: fixed;
+            bottom: 18px;
+            right: 230px;
+            padding: 10px 10px;
             font-size: 18px;
             cursor: pointer;
             display: none;
-            background-color: #FF0000;
+            background-color: #27ae60;
             color: white;
-            border: 2px solid #e67e22;
+            border: 2px solid #228B22;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.3s;
@@ -95,7 +97,7 @@
 
         /* При наведении на кнопку */
         #suggestButton:hover {
-            background-color: #FF4500;
+            background-color: #2ecc71;
             transform: scale(1.05);
         }
 
@@ -131,7 +133,7 @@
 
         /* Кнопка тайного хода */
         #secretPathButton {
-            margin-top: 10px;
+            margin-top: 0px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -195,7 +197,7 @@
 
         /* Отображение хода */
         #turnStatus {
-            margin-top: 20px;
+            margin-top: 5px;
             font-size: 20px;
             font-weight: bold;
             color: #333;
@@ -275,35 +277,42 @@
         }
 
         #playerCards {
-            margin-top: 20px;
+            position: fixed; 
+            top: 20px;           
+            left: 20px;          
+            width: 150px;        
             padding: 15px;
-            background: white;
+            background: #fff;
             border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
+            z-index: 100;        
         }
 
         #cardsContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
+            gap: 10px;         
             margin-top: 10px;
         }
 
         .card-item {
-            width: 120px;
+            width: 140px;      
+            height: 190px;     
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 14px;   
             padding: 5px;
         }
 
         .card-item img {
-            object-fit: cover;
             width: 100%;
             height: 100%;
+            object-fit: cover;
+            border-radius: 8px; /* Немного скруглим */
         }
 
         .modal {
@@ -344,28 +353,189 @@
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
+            border: 2px solid #8B0000;
             border-radius: 8px;
-            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.3s;
             text-align: center;
             z-index: 10;
         }
 
         .accuse-button {
-            background-color: #27ae60;
+            background-color: #CD5C5C;
             color: white;
-            bottom: 20px;
-            right: 20px;
+            bottom: 18px;
+            right: 10px;
         }
+
         .accuse-button:hover {
-            background-color: #2ecc71;
-            transform: scale(1.1);
+            background-color: #FF4500;
+            transform: scale(1.05);
+        }
+        
+        #cluedo-notebook {
+            position: fixed;
+            top: 20px;
+            bottom: 80px;
+            right: 0;
+            width: 25vw;
+            background: #3CB371;
+            border-left: 1px solid #ccc;
+            box-shadow: -3px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Таблица занимает всю высоту контейнера */
+        #cluedo-table {
+            border-collapse: collapse;
+            width: 100%;
+            /* max-width: 900px; */
+            height: 100%;
+            table-layout: fixed;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-size: 12px;
+        }
+
+        #cluedo-table tr:not(:nth-child(2)):not(:nth-child(8)):not(:nth-child(14)) {
+            background-color: #f0f0f0;
+        }
+
+        /* Ячейки */
+        #cluedo-table td {
+            border: 1px solid #999;
+            /* background-color: #f0f0f0; */
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px 4px;
+            cursor: pointer;
+            position: relative;
+            overflow-wrap: break-word;
+            height: calc(100% / 24);   /* равномерное распределение высоты по 24 строкам */
+        }
+
+        /* Заголовочные ячейки */
+        #cluedo-table td:first-child {
+            cursor: default;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            text-align: left;
+            padding-left: 6px;
+        }
+
+        #cluedo-table tr:first-child td {
+            cursor: default;
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+
+        /* Метки */
+        .mark-cross::after {
+            content: "\2716";
+            color: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .mark-check::after {
+            content: "\2714";
+            color: green;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: gray;
+            opacity: 0.6;
+        }
+
+        /* Адаптивность: уменьшение шрифта и padding на маленьких экранах */
+        @media (max-width: 1200px) {
+            #cluedo-notebook {
+                width: 30vw;
+                top: 30px;
+                bottom: 30px;
+                padding: 8px;
+            }
+            #cluedo-table {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #cluedo-notebook {
+                width: 40vw;
+                top: 20px;
+                bottom: 20px;
+                padding: 6px;
+            }
+            #cluedo-table {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div id="board" class="grid"></div>
+
+    <div id="cluedo-notebook">
+        <table id="cluedo-table" border="1" cellspacing="0" cellpadding="5">
+          <colgroup>
+            <col style="width: 40%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td></td>
+              <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+            </tr>
+            <tr>
+              <td>Подозреваемые:</td>
+              <td colspan="5"></td>
+            </tr>
+            <tr data-card-id="1"><td>Надира</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="2"><td>Эмине</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Орудия:</td><td colspan="5"></td></tr>
+            <tr data-card-id="6"><td>Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="7"><td>Наргиле</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="8"><td>Фирдоуси</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="9"><td>Газель</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="10"><td>Шелковый шнур</td><td></td><td></td><td></td><td></td><td></td></tr> 
+            <tr><td>Место убийства:</td><td colspan="5"></td></tr>
+            <tr data-card-id="11"><td>Покои</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="12"><td>Павильон</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="13"><td>Галерея</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="14"><td>Кухня</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="16"><td>Тахтабош</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="15"><td>Макад</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="17"><td>Сад</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="18"><td>Хамам</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="19"><td>Сокровищница</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+    </div>
 
     <p id="turnStatus">Ход: Шахризар (Игрок)</p>
 
@@ -507,6 +677,7 @@
 
         // Фишка (ID) игрока
         let playerChipID = 5;
+        let playerID = playerChipID;
 
         // Ход игры: тот, кто сейчас ходит (игрок или бот)
         let currentPlayer = "player";
@@ -1189,6 +1360,7 @@
         // Обработчик кнопки "Начать игру"
         startButton.addEventListener("click", async () => {
         localStorage.clear(); // Очистка данных предыдущей игры
+        clearNotebook();
         playerCards.style.display = "none"; // Скрывает карты игрока
         startButton.style.display = "none";
         rollDiceButton.style.display = "inline-block";
@@ -1213,6 +1385,7 @@
             if (!response.ok) throw new Error("Ошибка при создании игры");
             const data = await response.json();
             console.log("Игра создана:", data);
+            await loadPlayerCards();
             // Отображение карт игрока
             displayPlayerCards(data.playerCards);
         } catch (error) {
@@ -1254,6 +1427,8 @@
             // Сохранение карт игрока в localStorage
             localStorage.setItem("playerCards", JSON.stringify(cards));
             saveGameState(); // Обновляем сохранение
+            // Отметка карт в бланке
+            markPlayerCards(cards);
         }
 
         // Массив эмодзи для костей (Unicode символы ⚀-⚅)
@@ -1546,6 +1721,142 @@
                 isMoveCompleted = true;
             }
         });
+
+        // Обработка клика по ячейке блокнота
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.getElementById('cluedo-table');
+
+            table.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.tagName !== 'TD') return;
+
+                const cell = target;
+                const row = cell.parentElement;
+                const rowIndex = row.rowIndex;
+                const cellIndex = cell.cellIndex;
+
+                // Игнорирует служебные строки и первую колонку
+                if (cellIndex === 0 || rowIndex === 7 || rowIndex === 13 || rowIndex === 0 || rowIndex === 1) return;
+
+                // Цикл меток: нет -> крестик -> галочка -> нет
+                if (cell.classList.contains('mark-cross')) {
+                    cell.classList.remove('mark-cross');
+                    cell.classList.add('mark-check');
+                } else if (cell.classList.contains('mark-check')) {
+                    cell.classList.remove('mark-check');
+                } else {
+                    cell.classList.add('mark-cross');
+                }
+
+                // Сохранение изменений
+                saveNotebookState();
+            });
+
+            // Восстановление состояний при загрузке
+            loadNotebookState();
+        });
+
+        function saveNotebookState() {
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+            const notebookState = {};
+
+            rows.forEach(row => {
+                const cardId = row.getAttribute("data-card-id");
+                const cells = row.querySelectorAll("td");
+
+                notebookState[cardId] = [];
+
+                cells.forEach((cell, index) => {
+                    if (index === 0) return; // Пропускает первую колонку с названием
+
+                    if (cell.classList.contains("mark-cross")) {
+                        notebookState[cardId][index - 1] = "cross";
+                    } else if (cell.classList.contains("mark-check")) {
+                        notebookState[cardId][index - 1] = "check";
+                    } else {
+                        notebookState[cardId][index - 1] = "";
+                    }
+                });
+            });
+
+            localStorage.setItem("notebookState", JSON.stringify(notebookState));
+        }
+
+        function loadNotebookState() {
+            const notebookState = JSON.parse(localStorage.getItem("notebookState")) || {};
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+
+            rows.forEach(row => {
+                const cardId = row.getAttribute("data-card-id");
+                const cells = row.querySelectorAll("td");
+
+                if (notebookState[cardId]) {
+                    notebookState[cardId].forEach((mark, index) => {
+                        const cell = cells[index + 1]; // +1, чтобы пропустить первую колонку
+                        cell.classList.remove("mark-cross", "mark-check");
+
+                        if (mark === "cross") {
+                            cell.classList.add("mark-cross");
+                        } else if (mark === "check") {
+                            cell.classList.add("mark-check");
+                        }
+                    });
+                }
+            });
+        }
+
+        function clearNotebook() {
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                cells.forEach(cell => {
+                    cell.classList.remove("mark-cross", "mark-check");
+                });
+            });
+
+            // Очистка данных из localStorage
+            localStorage.removeItem("notebookState");
+        }
+
+        async function loadPlayerCards() {
+            try {
+                const response = await fetch("getPlayerCards.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ playerID: 5 }) // ID игрока
+                });
+
+                if (!response.ok) throw new Error("Ошибка при получении карт игрока");
+
+                const data = await response.json();
+                if (data.success) {
+                    displayPlayerCards(data.cards); // Отображаем карты на экране и отмечаем в бланке
+                } else {
+                    console.error("Ошибка получения карт:", data.message);
+                }
+            } catch (error) {
+                console.error("Ошибка:", error);
+            }
+        }
+
+        function markPlayerCards(playerCards) {
+            playerCards.forEach(card => {
+                // Находим строку с соответствующим data-card-id
+                const row = document.querySelector(`tr[data-card-id="${card.id}"]`);
+                if (row) {
+                    const playerCell = row.querySelector('td:nth-child(6)'); // Ячейка с меткой игрока (последняя колонка)
+                    if (playerCell) {
+                        playerCell.classList.add('mark-check');
+                    }
+                }
+            });
+        }
 
         renderBoard();
         showAccuseButton();
