@@ -139,7 +139,7 @@ session_start();
         <img src="img/Орхан.png" alt="Орхан" class="img-fluid rounded mb-2" width="150">
         <img src="img/Шахризар.png" alt="Шахризар" class="img-fluid rounded mb-2" width="150">
         <img src="img/Малхун.png" alt="Малхун" class="img-fluid rounded mb-2" width="150">
-        <img src="img/Эмине.png" alt="Эмине" class="img-fluid rounded" width="150">
+        <img src="img/Эмине.png" alt="Эмине" class="img-fluid rounded mb-2" width="150">
     </div>
 
     <h3>Орудия преступления:</h3>
@@ -155,7 +155,7 @@ session_start();
         <img src="img/Наргиле.png" alt="Наргиле" class="img-fluid rounded mb-2" width="150">
         <img src="img/Фирдоуси.png" alt="Фирдоуси" class="img-fluid rounded mb-2" width="150">
         <img src="img/Газель.png" alt="Газель" class="img-fluid rounded mb-2" width="150">
-        <img src="img/Шнур.png" alt="Шнур" class="img-fluid rounded" width="150">
+        <img src="img/Шнур.png" alt="Шнур" class="img-fluid rounded mb-2" width="150">
     </div>
 
     <h3>Локации:</h3>
