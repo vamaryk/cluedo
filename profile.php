@@ -58,7 +58,7 @@ if (!$user) {
                         </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-book"></i> правила</a>
+                        <a class="nav-link" href="rules.php"><i class="fa fa-book"></i> правила</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fa fa-cog"></i> настройки</a>
