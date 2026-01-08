@@ -18,6 +18,9 @@ if (!$user) {
     header('Location: logout.php');
     exit;
 }
+
+// Установим дефолтный аватар, если в БД пусто
+$avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +35,60 @@ if (!$user) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Дополнительные стили для функционала загрузки аватара */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .avatar-wrapper .avatar {
+            width: 100%;
+            height: 100%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        .avatar-wrapper .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+        .avatar-wrapper:hover .avatar-overlay {
+            opacity: 1;
+        }
+        .avatar-overlay i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        #avatarMessage {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="gradient"></div>
@@ -56,6 +113,9 @@ if (!$user) {
                         <li class="nav-item">
                             <a class="nav-link current" href="profile.php"><i class="fa fa-user"></i> профиль</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="users.php"><i class="fa fa-user"></i> пользователи</a>
+                        </li>
                     <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="rules.php"><i class="fa fa-book"></i> правила</a>
@@ -74,7 +134,21 @@ if (!$user) {
     <div class="profile-container">
         <!-- Левая панель -->
         <div class="left-panel">
-            <div class="avatar"><img src="<?php echo htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png'); ?>" alt="Аватар"></div>
+            
+            <!-- Обновленный блок аватара с возможностью загрузки -->
+            <div class="avatar-wrapper">
+                <div class="avatar">
+                    <img id="profileAvatar" src="<?php echo $avatar_src; ?>" alt="Аватар">
+                    <label for="avatarUpload" class="avatar-overlay" title="Изменить фото">
+                        <i class="fa fa-camera"></i>
+                        <span>Изменить</span>
+                    </label>
+                </div>
+            </div>
+            <input type="file" id="avatarUpload" name="avatar" accept="image/jpeg, image/png, image/gif" style="display: none;">
+            <div id="avatarMessage"></div>
+            <!-- Конец обновленного блока -->
+
             <h3><?php echo htmlspecialchars($user['UserName']); ?></h3>
             <p><?php echo htmlspecialchars($user['Email']); ?></p>
             <div class="stats">
@@ -113,6 +187,7 @@ if (!$user) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Функция для воспроизведения музыки
         function playBackgroundMusic() {
@@ -128,6 +203,39 @@ if (!$user) {
         window.onload = function () {
             playBackgroundMusic();
         };
+
+        // --- Функционал загрузки аватара ---
+
+        document.getElementById('avatarUpload').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                uploadAvatar(this.files[0]);
+            }
+        });
+
+        function uploadAvatar(file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            $.ajax({
+                url: 'upload_avatar.php',
+                type: 'POST',
+                data: formData,
+                processData: false, // Обязательно для загрузки файлов
+                contentType: false, // Обязательно для загрузки файлов
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Обновляем src изображения, добавляя метку времени, чтобы браузер не использовал кэш
+                        $('#profileAvatar').attr('src', response.new_avatar_url + '?' + new Date().getTime()); 
+                    } else {
+                        $('#avatarMessage').html('<span style="color: red;">Ошибка: ' + response.message + '</span>');
+                    }
+                },
+                error: function() {
+                    $('#avatarMessage').html('<span style="color: red;">Ошибка сервера при загрузке файла.</span>');
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -30,14 +30,15 @@ session_start();
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(255, 166, 88, 0.9), rgba(189, 222, 143, 0.9));
+            /* background: linear-gradient(rgba(255, 166, 88, 0.9), rgba(189, 222, 143, 0.9)); */
+            background: linear-gradient(rgba(98, 34, 105, 0.9), rgba(42, 34, 82, 0.9));
             background-blend-mode: overlay;
             position: fixed;
             z-index: -1;
         }
 
         .navbar {
-            background-color: #FFF890 !important;
+            background-color: #CFC6FD !important;
             border-radius: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin: 2em;
@@ -74,8 +75,11 @@ session_start();
             font-size: 2em;
             margin: 1em 0;
             text-align: center;
-            color: #ECF9DB;
+            color: #FAFAFA;
             font-weight: bold;
+        }
+        h3, p, li {
+            color: #FAFAFA;
         }
     </style>
 </head>
@@ -101,6 +105,9 @@ session_start();
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="profile.php"><i class="fa fa-user"></i> профиль</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.php"><i class="fa fa-user"></i> пользователи</a>
                     </li>
                 <?php endif; ?>
                 <li class="nav-item">

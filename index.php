@@ -19,6 +19,22 @@ if (isset($_SESSION['user_id'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 1em;
+            font-weight: 600;
+            color: #dc3545;
+        }
+        .form-control.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
     <div class="gradient"></div>
@@ -71,15 +87,19 @@ if (isset($_SESSION['user_id'])) {
             <form id="registrationForm">
                 <div class="form-group">
                     <input type="text" class="form-control" id="username" placeholder="имя пользователя" required>
+                    <div class="invalid-feedback" id="username_error"></div>
                 </div>
                 <div class="form-group">
                     <input type="email" class="form-control" id="email" placeholder="электронная почта" required>
+                    <div class="invalid-feedback" id="email_error"></div>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" id="password" placeholder="пароль" required>
+                    <div class="invalid-feedback" id="password_error"></div>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" id="confirm_password" placeholder="повторите пароль" required>
+                    <div class="invalid-feedback" id="confirm_password_error"></div>
                 </div>
                 <button type="submit" class="btn-register">зарегистрироваться</button>
             </form>
@@ -88,9 +108,13 @@ if (isset($_SESSION['user_id'])) {
             <form id="loginForm">
                 <div class="form-group">
                     <input type="text" class="form-control" id="login_username" placeholder="имя пользователя" required>
+                    <!-- Элемент для отображения ошибки имени пользователя -->
+                    <div class="invalid-feedback" id="login_username_error"></div>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" id="login_password" placeholder="пароль" required>
+                    <!-- Элемент для отображения ошибки пароля -->
+                    <div class="invalid-feedback" id="login_password_error"></div>
                 </div>
                 <button type="submit" class="btn-register">войти</button>
             </form>
@@ -100,12 +124,33 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        
+        // Вспомогательная функция для очистки ошибок авторизации
+        function clearLoginErrors() {
+            document.getElementById('login_username').classList.remove('is-invalid');
+            document.getElementById('login_password').classList.remove('is-invalid');
+            document.getElementById('login_username_error').textContent = '';
+            document.getElementById('login_password_error').textContent = '';
+        }
+
+        // Вспомогательная функция для очистки ошибок регистрации
+        function clearRegistrationErrors() {
+            ['username', 'email', 'password', 'confirm_password'].forEach(id => {
+                const inputElement = document.getElementById(id);
+                const errorElement = document.getElementById(id + '_error');
+                
+                if (inputElement) inputElement.classList.remove('is-invalid');
+                if (errorElement) errorElement.textContent = '';
+            });
+        }
+
         // Переключение между регистрацией и авторизацией
         document.getElementById('register-tab').addEventListener('click', function () {
             document.getElementById('register-tab').classList.add('active');
             document.getElementById('login-tab').classList.remove('active');
             document.getElementById('register-form').style.display = 'block';
             document.getElementById('login-form').style.display = 'none';
+            clearLoginErrors(); 
         });
 
         document.getElementById('login-tab').addEventListener('click', function () {
@@ -113,18 +158,24 @@ if (isset($_SESSION['user_id'])) {
             document.getElementById('register-tab').classList.remove('active');
             document.getElementById('register-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
+            clearRegistrationErrors(); // Очищаем ошибки регистрации при переключении
         });
 
         // AJAX для отправки формы регистрации
         document.getElementById('registrationForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            clearRegistrationErrors(); // Очищаем предыдущие ошибки
+
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirm_password = document.getElementById('confirm_password').value;
 
+            // Проверка совпадения паролей на клиенте
             if (password !== confirm_password) {
-                alert('Пароли не совпадают');
+                document.getElementById('password').classList.add('is-invalid');
+                document.getElementById('confirm_password').classList.add('is-invalid');
+                document.getElementById('confirm_password_error').textContent = 'Пароли не совпадают';
                 return;
             }
 
@@ -136,14 +187,31 @@ if (isset($_SESSION['user_id'])) {
                     email: email,
                     password: password
                 },
+                dataType: 'json', // Ожидаем JSON ответ
                 success: function (response) {
-                    //alert(response);
-                    if (response === 'Успешная регистрация') {
-                        window.location.href = 'index.php'; // Перенаправление после успешной регистрации
+                    if (response.success) {
+                        window.location.href = 'profile.php'; // Перенаправление после успешной регистрации
+                    } else {
+                        // Обработка ошибки
+                        if (response.field && response.field !== 'general') {
+                            const fieldId = response.field;
+                            const errorElement = document.getElementById(fieldId);
+                            const errorFeedbackElement = document.getElementById(fieldId + '_error');
+                            
+                            if (errorElement && errorFeedbackElement) {
+                                errorElement.classList.add('is-invalid');
+                                errorFeedbackElement.textContent = response.message;
+                            } else {
+                                alert(response.message);
+                            }
+                        } else {
+                            // Общая ошибка (например, ошибка базы данных)
+                            alert('Ошибка регистрации: ' + response.message);
+                        }
                     }
                 },
                 error: function () {
-                    alert('Ошибка при отправке данных');
+                    alert('Ошибка при отправке данных на сервер.');
                 }
             });
         });
@@ -151,6 +219,8 @@ if (isset($_SESSION['user_id'])) {
         // AJAX для отправки формы авторизации
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            clearLoginErrors(); // Очищаем предыдущие ошибки
+
             const username = document.getElementById('login_username').value;
             const password = document.getElementById('login_password').value;
 
@@ -161,14 +231,31 @@ if (isset($_SESSION['user_id'])) {
                     username: username,
                     password: password
                 },
+                dataType: 'json', // Ожидаем JSON ответ
                 success: function (response) {
-                    //alert(response);
-                    if (response === 'Успешный вход') {
+                    if (response.success) {
                         window.location.href = 'profile.php'; // Перенаправление после успешного входа
+                    } else {
+                        // Обработка ошибки
+                        if (response.error_type === 'credentials') {
+                            // При ошибке учетных данных (неверный логин/пароль)
+                            
+                            // 1. Отображаем сообщение под полем пароля (или имени пользователя, как удобнее)
+                            document.getElementById('login_password_error').textContent = response.message;
+                            
+                            // 2. Применяем класс is-invalid к обоим полям для визуального выделения
+                            document.getElementById('login_username').classList.add('is-invalid');
+                            document.getElementById('login_password').classList.add('is-invalid');
+
+                        } else {
+                            // Общая ошибка
+                            alert(response.message);
+                        }
                     }
                 },
-                error: function () {
-                    alert('Ошибка при отправке данных');
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Ошибка сети или сервера
+                    alert('Ошибка при отправке данных. Попробуйте позже.');
                 }
             });
         });

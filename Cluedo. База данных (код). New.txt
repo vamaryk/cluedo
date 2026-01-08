@@ -18,7 +18,6 @@ CREATE TABLE Friends (
     FriendOwner INT REFERENCES Users(ID) ON DELETE CASCADE,
     FriendStatus ENUM('Pending', 'Accepted', 'Blocked') NOT NULL DEFAULT 'Pending',
     PRIMARY KEY (Friend, FriendOwner),
-    CHECK (Friend < FriendOwner)
 );
 
 CREATE TABLE ChatMessages (
