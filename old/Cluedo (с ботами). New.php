@@ -11,7 +11,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 30px;
+            margin: 20px;
             position: relative;
         }
 
@@ -80,14 +80,16 @@
 
         /* Кнопка предположения */
         #suggestButton {
-            margin-top: 20px;
-            padding: 15px 30px;
+            position: fixed;
+            bottom: 18px;
+            right: 230px;
+            padding: 10px 10px;
             font-size: 18px;
             cursor: pointer;
             display: none;
-            background-color: #f39c12;
+            background-color: #27ae60;
             color: white;
-            border: 2px solid #e67e22;
+            border: 2px solid #228B22;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.3s;
@@ -95,7 +97,7 @@
 
         /* При наведении на кнопку */
         #suggestButton:hover {
-            background-color: #e67e22;
+            background-color: #2ecc71;
             transform: scale(1.05);
         }
 
@@ -131,7 +133,7 @@
 
         /* Кнопка тайного хода */
         #secretPathButton {
-            margin-top: 10px;
+            margin-top: 0px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -153,6 +155,7 @@
         /* Кнопка "Начать игру" */
         #startButton,
         #endTurnButton {
+            margin-top: 10px;
             padding: 15px 30px;
             font-size: 18px;
             cursor: pointer;
@@ -175,6 +178,7 @@
 
         /* Стиль для кнопки "Завершить ход" */
         #endTurnButton {
+            margin-top: 10px;
             background-color: #f39c12;
             color: white;
             display: none;
@@ -193,7 +197,7 @@
 
         /* Отображение хода */
         #turnStatus {
-            margin-top: 20px;
+            margin-top: 5px;
             font-size: 20px;
             font-weight: bold;
             color: #333;
@@ -273,48 +277,273 @@
         }
 
         #playerCards {
-            margin-top: 20px;
+            position: fixed; 
+            top: 20px;           
+            left: 20px;          
+            width: 150px;        
             padding: 15px;
-            background: white;
+            background: #fff;
             border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
+            z-index: 100;        
         }
 
         #cardsContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
+            gap: 10px;         
             margin-top: 10px;
         }
 
         .card-item {
-            width: 120px;
+            width: 140px;      
+            height: 190px;     
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 14px;   
             padding: 5px;
         }
 
         .card-item img {
-            object-fit: cover;
             width: 100%;
             height: 100%;
+            object-fit: cover;
+            border-radius: 8px; /* Немного скруглим */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            margin: 100px auto;
+            width: 300px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .modal-content select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Кнопка "Сделать обвинение" */
+        .action-button {
+            position: fixed;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid #8B0000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .accuse-button {
+            background-color: #CD5C5C;
+            color: white;
+            bottom: 18px;
+            right: 10px;
+        }
+
+        .accuse-button:hover {
+            background-color: #FF4500;
+            transform: scale(1.05);
+        }
+        
+        #cluedo-notebook {
+            position: fixed;
+            top: 20px;
+            bottom: 80px;
+            right: 0;
+            width: 25vw;
+            background: #3CB371;
+            border-left: 1px solid #ccc;
+            box-shadow: -3px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Таблица занимает всю высоту контейнера */
+        #cluedo-table {
+            border-collapse: collapse;
+            width: 100%;
+            /* max-width: 900px; */
+            height: 100%;
+            table-layout: fixed;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-size: 12px;
+        }
+
+        #cluedo-table tr:not(:nth-child(2)):not(:nth-child(8)):not(:nth-child(14)) {
+            background-color: #f0f0f0;
+        }
+
+        /* Ячейки */
+        #cluedo-table td {
+            border: 1px solid #999;
+            /* background-color: #f0f0f0; */
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px 4px;
+            cursor: pointer;
+            position: relative;
+            overflow-wrap: break-word;
+            height: calc(100% / 24);   /* равномерное распределение высоты по 24 строкам */
+        }
+
+        /* Заголовочные ячейки */
+        #cluedo-table td:first-child {
+            cursor: default;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            text-align: left;
+            padding-left: 6px;
+        }
+
+        #cluedo-table tr:first-child td {
+            cursor: default;
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+
+        /* Метки */
+        .mark-cross::after {
+            content: "\2716";
+            color: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .mark-check::after {
+            content: "\2714";
+            color: green;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: gray;
+            opacity: 0.6;
+        }
+
+        /* Адаптивность: уменьшение шрифта и padding на маленьких экранах */
+        @media (max-width: 1200px) {
+            #cluedo-notebook {
+                width: 30vw;
+                top: 30px;
+                bottom: 30px;
+                padding: 8px;
+            }
+            #cluedo-table {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #cluedo-notebook {
+                width: 40vw;
+                top: 20px;
+                bottom: 20px;
+                padding: 6px;
+            }
+            #cluedo-table {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-
     <div id="board" class="grid"></div>
+
+    <div id="cluedo-notebook">
+        <table id="cluedo-table" border="1" cellspacing="0" cellpadding="5">
+          <colgroup>
+            <col style="width: 40%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+            <col style="width: 12%;" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td></td>
+              <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+            </tr>
+            <tr>
+              <td>Подозреваемые:</td>
+              <td colspan="5"></td>
+            </tr>
+            <tr data-card-id="1"><td>Надира</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="2"><td>Эмине</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Орудия:</td><td colspan="5"></td></tr>
+            <tr data-card-id="6"><td>Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="7"><td>Наргиле</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="8"><td>Фирдоуси</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="9"><td>Газель</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="10"><td>Шелковый шнур</td><td></td><td></td><td></td><td></td><td></td></tr> 
+            <tr><td>Место убийства:</td><td colspan="5"></td></tr>
+            <tr data-card-id="11"><td>Покои</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="12"><td>Павильон</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="13"><td>Галерея</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="14"><td>Кухня</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="16"><td>Тахтабош</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="15"><td>Макад</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="17"><td>Сад</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="18"><td>Хамам</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="19"><td>Сокровищница</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+    </div>
 
     <p id="turnStatus">Ход: Шахризар (Игрок)</p>
 
     <button id="suggestButton" style="display: none;">Сделать предположение</button>
 
     <button id="secretPathButton" style="display: none;">Воспользоваться тайным ходом</button>
+
+    <button id="accuseButton" class="action-button accuse-button">Сделать обвинение</button>
 
     <button id="startButton">Начать игру</button>
 
@@ -334,10 +563,40 @@
         <div id="cardsContainer"></div>
     </div>
 
-    <!-- Модальное окно для сообщения -->
-    <div id="modal">
-        <p>Вы сделали предположение.</p>
-        <button id="modalButton">Ок</button>
+    <!-- Модальное окно для старой логики -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>Вы сделали предположение</h2>
+            <button id="modalButton">Ок</button>
+        </div>
+    </div>
+
+    <!-- Новое модальное окно для выбора карт -->
+    <div id="suggestModal" class="modal">
+        <div class="modal-content">
+            <h2>Сделайте предположение</h2>
+            <label for="characterSelect">Выберите персонажа:</label>
+            <select id="characterSelect"></select>
+            <label for="weaponSelect">Выберите оружие:</label>
+            <select id="weaponSelect"></select>
+            <label for="roomSelect">Выберите комнату:</label>
+            <select id="roomSelect"></select>
+            <button id="suggestModalButton">Ок</button>
+        </div>
+    </div>
+
+    <!-- Новое модальное окно для выбора карт -->
+    <div id="accuseModal" class="modal">
+        <div class="modal-content">
+            <h2>Сделать обвинение</h2>
+            <label>Выберите персонажа:</label>
+            <select id="accuseCharacterSelect"></select><br>
+            <label>Выберите оружие:</label>
+            <select id="accuseWeaponSelect"></select><br>
+            <label>Выберите комнату:</label>
+            <select id="accuseRoomSelect"></select><br>
+            <button id="accuseModalButton">Ок</button>
+        </div>
     </div>
 
     <script>
@@ -375,24 +634,24 @@
         const cells = {
             1: { id: 1, type: "walkable" },
             2: { id: 2, type: "blocked" },
-            3: { id: 3, type: "room" },
-            4: { id: 4, type: "room" },
-            5: { id: 5, type: "room" },
-            6: { id: 6, type: "room" },
-            7: { id: 7, type: "room" },
-            8: { id: 8, type: "room" },
-            9: { id: 9, type: "room" },
-            10: { id: 10, type: "room" },
-            11: { id: 11, type: "room" },
-            12: { id: 12, type: "room" },
-            13: { id: 13, type: "room" },
-            14: { id: 14, type: "room" },
-            15: { id: 15, type: "room" },
-            16: { id: 16, type: "room" },
-            17: { id: 17, type: "room" },
-            18: { id: 18, type: "room" },
-            19: { id: 19, type: "room" },
-            20: { id: 20, type: "room" }
+            3: { id: 3, type: "room", RoomName: 11 },
+            4: { id: 4, type: "room", RoomName: 11 },
+            5: { id: 5, type: "room", RoomName: 12 },
+            6: { id: 6, type: "room", RoomName: 12 },
+            7: { id: 7, type: "room", RoomName: 13 },
+            8: { id: 8, type: "room", RoomName: 13 },
+            9: { id: 9, type: "room", RoomName: 14 },
+            10: { id: 10, type: "room", RoomName: 14 },
+            11: { id: 11, type: "room", RoomName: 14 },
+            12: { id: 12, type: "room", RoomName: 15 },
+            13: { id: 13, type: "room", RoomName: 16 },
+            14: { id: 14, type: "room", RoomName: 16 },
+            15: { id: 15, type: "room", RoomName: 16 },
+            16: { id: 16, type: "room", RoomName: 16 },
+            17: { id: 17, type: "room", RoomName: 17 },
+            18: { id: 18, type: "room", RoomName: 17 },
+            19: { id: 19, type: "room", RoomName: 18 },
+            20: { id: 20, type: "room", RoomName: 19 }
         };
 
         const secretPaths = {
@@ -416,8 +675,9 @@
             { id: 4, name: "Малхун", x: 1, y: 17, steps: 10 }
         ];
 
-        // Фишка ID() игрока
+        // Фишка (ID) игрока
         let playerChipID = 5;
+        let playerID = playerChipID;
 
         // Ход игры: тот, кто сейчас ходит (игрок или бот)
         let currentPlayer = "player";
@@ -434,6 +694,9 @@
         // Флаг, чтобы заблокировать действия игрока до начала игры
         let isGameStarted = false;
 
+        // Флаг проигрыша игрока 
+        let playerEliminated = false;
+
         const board = document.getElementById("board");
 
         const suggestButton = document.getElementById("suggestButton");
@@ -442,8 +705,46 @@
         const endTurnButton = document.getElementById("endTurnButton");
         const modal = document.getElementById("modal");
         const modalButton = document.getElementById("modalButton");
-
         const playerCards = document.getElementById("playerCards");
+        const accuseButton = document.getElementById("accuseButton");
+        const suggestModal = document.getElementById("suggestModal");
+        const suggestModalButton = document.getElementById("suggestModalButton");
+
+        // Сохраняемые параметры
+        function saveGameState() {
+            const gameState = {
+                isGameStarted,
+                playerPos,
+                bots: bots.map(bot => ({ id: bot.id, name: bot.name, x: bot.x, y: bot.y, steps: bot.steps })),
+                playerCards: JSON.parse(localStorage.getItem("playerCards")) || []
+            };
+            localStorage.setItem("gameState", JSON.stringify(gameState));
+        }
+
+        // Функция для загрузки сохраненных параметров
+        function restoreGameState() {
+            const savedState = JSON.parse(localStorage.getItem("gameState"));
+            if (!savedState) return;
+            isGameStarted = savedState.isGameStarted;
+            playerPos = savedState.playerPos;
+            bots = savedState.bots;
+            // Восстановление карт игрока
+            const savedCards = savedState.playerCards;
+            if (savedCards.length > 0) {
+                displayPlayerCards(savedCards);
+                playerCards.style.display = "inline-block";
+            }
+            if (isGameStarted) {
+                startButton.style.display = "none";
+                rollDiceButton.style.display = "inline-block";
+                endTurnButton.style.display = "inline-block";
+                accuseButton.style.display = "inline-block";
+                showSuggestButton();
+                showSecretPathButton();
+                showAccuseButton();
+                renderBoard();
+            }
+        }
 
         // Поиск, какие клетки (ID) относятся к указанной комнате
         function fetchRoomCellsByRoomName(roomName) {
@@ -538,6 +839,10 @@
 
         // Отображение кнопки для тайного хода
         function showSecretPathButton() {
+            if (!isGameStarted || currentPlayer !== "player") {
+                secretPathButton.style.display = "none";
+                return;
+            }
             const cellId = matrix[playerPos.y][playerPos.x];
             const cell = cells[cellId];
             // Проверка, связана ли текущая клетка с потайным ходом
@@ -565,8 +870,11 @@
                         suggestButton.style.display = "none";
                         secretPathButton.style.display = "none";
                         endTurnButton.style.display = "none";
+                        accuseButton.style.display = "none";
+                        rollDiceButton.style.display = "none";
+                        saveGameState();
                         botMove();
-                    }, 500); // небольшая задержка, чтобы игрок успел увидеть перемещение
+                    }, 5); // небольшая задержка, чтобы игрок успел увидеть перемещение
                     return;
                 }
             }
@@ -575,32 +883,267 @@
         // Обработчик для тайного хода
         secretPathButton.addEventListener("click", useSecretPath);
 
-        // Отображение кнопки для предположения
+        // Функция для отображения кнопки предположения
         function showSuggestButton() {
+            if (!isGameStarted || currentPlayer !== "player") {
+                suggestButton.style.display = "none";
+                return;
+            }
             const cellId = matrix[playerPos.y][playerPos.x];
             const cell = cells[cellId];
             if (cell && cell.type === "room") {
-                suggestButton.style.display = "inline-block"; // Показать кнопку
+                suggestButton.style.display = "inline-block";
             } else {
-                suggestButton.style.display = "none"; // Скрыть кнопку
+                suggestButton.style.display = "none";
             }
         }
 
-        // Открыть модальное окно при нажатии на кнопку
-        suggestButton.addEventListener("click", () => {
-            modal.style.display = "block"; // Показать модальное окно
+        // Функция для загрузки карт из БД по типу
+        async function loadCardsByType(type) {
+            try {
+                const response = await fetch('getCards.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ type: type })
+                });
+                const data = await response.json();
+                return data.cards;
+            } catch (error) {
+                console.error('Ошибка загрузки карт:', error);
+                return [];
+            }
+        }
+
+        // Функция для создания выпадающего списка
+        function createDropdown(cards, selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = ''; // Очистим текущие опции
+            cards.forEach(card => {
+                const option = document.createElement('option');
+                option.value = card.ID;
+                option.textContent = card.CardName;
+                select.appendChild(option);
+            });
+        }
+
+        // Обработчик для кнопки предположения
+        suggestButton.addEventListener("click", async () => {
+            suggestModal.style.display = "block"; // Открываем новое окно
+            // Загрузка карт из БД
+            const characters = await loadCardsByType('Character');
+            const weapons = await loadCardsByType('Weapon');
+            const rooms = await loadCardsByType('Room');
+            // Заполнение выпадающих списков
+            createDropdown(characters, 'characterSelect');
+            createDropdown(weapons, 'weaponSelect');
+            createDropdown(rooms, 'roomSelect');
+        });
+
+        // Обработчик для кнопки "Ок" в новом модальном окне
+        suggestModalButton.addEventListener("click", async () => {
+            const selectedCharacter = document.getElementById('characterSelect').value;
+            const selectedWeapon = document.getElementById('weaponSelect').value;
+            const selectedRoom = document.getElementById('roomSelect').value;
+            if (selectedCharacter && selectedWeapon && selectedRoom) {
+                const selectedCards = [selectedCharacter, selectedWeapon, selectedRoom];
+                try {
+                    // 1. Получаем ID карт
+                    const responseIDs = await fetch('getCardIDs.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ cardNames: selectedCards })
+                    });
+                    const dataIDs = await responseIDs.json();
+                    const cardIDs = dataIDs.cards.map(card => card.ID);
+                    if (cardIDs.length !== 3) {
+                        throw new Error("Не удалось получить все ID карт.");
+                    }
+                    // 2. Ищем игрока, у которого есть одна из карт
+                    const responseCheck = await fetch('checkCards.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ cardIDs: cardIDs })
+                    });
+                    const dataCheck = await responseCheck.json();
+                    const { playerID, cardName, noMatch } = dataCheck;
+                    let message = "У других игроков нет таких карт.";
+                    if (!noMatch && playerID) {
+                        const bot = bots.find(b => b.id === parseInt(playerID));
+                        if (bot) {
+                            message = `У игрока ${bot.name} есть карта "${cardName}".`;
+                        }
+                    }
+                    document.querySelector("#modal .modal-content h2").textContent = message;
+                    // 3. Перемещение персонажа
+                    const characterCardID = cardIDs[0]; // Первый элемент - это персонаж
+                    const selectedCharacterCard = dataIDs.cards.find(card => card.ID === characterCardID);
+                    if (selectedCharacterCard) {
+                        const characterName = selectedCharacterCard.CardName;
+                        // Находим бота по имени персонажа
+                        const targetBot = bots.find(b => b.name === characterName);
+                        if (targetBot) {
+                            console.log(`Перемещаем персонажа ${characterName} (бота ${targetBot.name}) на позицию игрока.`);
+                            // Перемещаем бота на клетку игрока
+                            targetBot.x = playerPos.x;
+                            targetBot.y = playerPos.y;
+                            // Визуально обновляем позицию бота
+                            const botElement = document.getElementById(`bot-${targetBot.id}`);
+                            if (botElement) {
+                                botElement.style.left = `${playerPos.x * cellSize}px`;
+                                botElement.style.top = `${playerPos.y * cellSize}px`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Ошибка:", error);
+                }
+                suggestModal.style.display = "none";
+                modal.style.display = "block";
+                saveGameState();
+            } else {
+                alert("Пожалуйста, выберите все три карты.");
+            }
         });
 
         // Завершить ход при нажатии на "Ок"
         modalButton.addEventListener("click", () => {
+            // Проверяем, завершена ли игра (например, после правильного обвинения)
+            if (!isGameStarted) {
+                modal.style.display = "none";
+                return;
+            }
+
             if (currentPlayer === "player") {
                 // Игрок завершил ход
                 currentPlayer = currentBot; // Следующий ход - первый бот
                 modal.style.display = "none";
+                accuseButton.style.display = "none";
                 suggestButton.style.display = "none";
                 secretPathButton.style.display = "none";
                 endTurnButton.style.display = "none";
-                botMove(); // Перемещаем первого бота
+                rollDiceButton.style.display = "none";
+
+                // Если игрок был исключен - пропускаем его ход
+                if (playerEliminated) {
+                    currentPlayer = currentBot; // Сразу передаем ход боту
+                }
+
+                // Запуск хода следующего бота, если игра не завершена
+                if (isGameStarted) {
+                    botMove();
+                }
+            }
+        });
+
+        // Отображение кнопки "Сделать обвинение"
+        function showAccuseButton() {
+            if (!isGameStarted || currentPlayer !== "player") {
+                accuseButton.style.display = "none";
+                return;
+            } else {
+                accuseButton.style.display = "inline-block";
+            }
+        }
+
+        // Обработчик клика на кнопку обвинения
+        accuseButton.addEventListener("click", async () => {
+            accuseModal.style.display = "block"; // Открываем новое окно
+            // Загрузка карт из БД
+            const characters = await loadCardsByType('Character');
+            const weapons = await loadCardsByType('Weapon');
+            const rooms = await loadCardsByType('Room');
+            // Заполнение выпадающих списков
+            createDropdown(characters, 'accuseCharacterSelect');
+            createDropdown(weapons, 'accuseWeaponSelect');
+            createDropdown(rooms, 'accuseRoomSelect');
+        });
+
+        // Функция сброса игры
+        function resetGame() {
+            // Сброс флагов
+            isGameStarted = false;
+            playerEliminated = false;
+            currentPlayer = "player";
+            isPlayerTurn = false;
+            isDiceRolled = false;
+            isBotMoving = false;
+
+            // Скрытие всех кнопок управления
+            rollDiceButton.style.display = "none";
+            endTurnButton.style.display = "none";
+            playerCards.style.display = "none";
+            accuseButton.style.display = "none";
+            suggestButton.style.display = "none";
+            secretPathButton.style.display = "none";
+            modal.style.display = "none";
+            accuseModal.style.display = "none";
+
+            // Отображение кнопки "Начать игру"
+            startButton.style.display = "inline-block";
+
+            // Сброс позиций игрока и ботов
+            playerPos = { x: 9, y: 25 };
+            savePlayerPos();
+            bots = [
+                { id: 1, name: "Надира", x: 10, y: 1, steps: 10 },
+                { id: 2, name: "Эмине", x: 16, y: 1, steps: 10 },
+                { id: 3, name: "Орхан", x: 25, y: 7, steps: 10 },
+                { id: 4, name: "Малхун", x: 1, y: 17, steps: 10 }
+            ];
+
+            // Перерисовка игрового поля
+            renderBoard();
+            document.getElementById("turnStatus").innerText = "Игра окончена. Нажмите 'Начать игру' для новой игры.";
+        }
+
+        // Обработчик кнопки "Ок" в модальном окне выбора карт для обвинения
+        accuseModalButton.addEventListener("click", async () => {
+            const selectedCharacter = document.getElementById('accuseCharacterSelect').value;
+            const selectedWeapon = document.getElementById('accuseWeaponSelect').value;
+            const selectedRoom = document.getElementById('accuseRoomSelect').value;
+
+            if (selectedCharacter && selectedWeapon && selectedRoom) {
+                try {
+                    const selectedCards = [selectedCharacter, selectedWeapon, selectedRoom];
+
+                    const response = await fetch('checkAccusation.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ selectedCards })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        document.querySelector("#modal .modal-content h2").textContent = "Вы сделали верное обвинение!";
+                        resetGame(); // Сброс игры
+                    } else {
+                        document.querySelector("#modal .modal-content h2").textContent = "Вы сделали неверное обвинение!";
+                        playerEliminated = true;
+                    }
+
+                    accuseModal.style.display = "none";
+                    modal.style.display = "block";
+
+                    // Скрывает все кнопки, игрок больше не участвует в игре
+                    accuseButton.style.display = "none";
+                    suggestButton.style.display = "none";
+                    endTurnButton.style.display = "none";
+                    secretPathButton.style.display = "none";
+
+                } catch (error) {
+                    console.error("Ошибка при проверке обвинения:", error);
+                }
+            } else {
+                alert("Пожалуйста, выберите все три карты.");
             }
         });
 
@@ -665,23 +1208,31 @@
                     renderBoard(); // Обновляет поле с каждым шагом
                     currentStep++;
                     // После шага делается задержка перед следующим шагом
-                    setTimeout(moveStep, 500); // Задержка 500ms
+                    setTimeout(moveStep, 250); // Задержка 500ms
                 } else {
                     // Когда все шаги завершены, бот завершает ход и передает очередь следующему
                     isBotMoving = false; // Разрешается следующий ход
                     currentBot = (currentBot + 1) % bots.length;
-                    if (currentBot === 0) {
-                        currentPlayer = "player"; // Если все боты завершили ход, ход переходит к игроку
-                        endTurnButton.style.display = "inline-block"; // Включается кнопка завершения хода
-                        document.getElementById("turnStatus").innerText = `Ход: Шахризар (Игрок)`;
-                        renderBoard();
-                        showSuggestButton();
-                        showSecretPathButton();
-                        rollDiceButton.disabled = false; // Разблокировка костей
-                        isDiceRolled = false; // Сброс флага броска
-                        isPlayerTurn = true;
-                    } else {
-                        botMove(); // Дает следующему боту ход
+            // Если текущий бот был последним и игрок еще не исключен
+            if (currentBot === 0) {
+                if (!playerEliminated) {
+                    currentPlayer = "player"; 
+                    endTurnButton.style.display = "inline-block";
+                    document.getElementById("turnStatus").innerText = `Ход: Шахризар (Игрок)`;
+                    renderBoard();
+                    showSuggestButton();
+                    showSecretPathButton();
+                    showAccuseButton();
+                    rollDiceButton.style.display = "inline-block";
+                    rollDiceButton.disabled = false;
+                    isDiceRolled = false;
+                    isPlayerTurn = true;
+                } else {
+                    // Игрок исключен - сразу начинаем новый цикл ботов
+                    botMove();
+                    }
+                } else {
+                        botMove(); // Передаем ход следующему боту
                     }
                 }
             }
@@ -808,13 +1359,17 @@
 
         // Обработчик кнопки "Начать игру"
         startButton.addEventListener("click", async () => {
+        localStorage.clear(); // Очистка данных предыдущей игры
+        clearNotebook();
+        playerCards.style.display = "none"; // Скрывает карты игрока
         startButton.style.display = "none";
         rollDiceButton.style.display = "inline-block";
         endTurnButton.style.display = "inline-block";
         playerCards.style.display = "inline-block";
+        accuseButton.style.display = "inline-block";
+        document.getElementById("turnStatus").innerText = `Ход: Шахризар (Игрок)`;
         currentPlayer = "player"; // Игрок начинает первый ход
         isGameStarted = true;
-
         try {
             // Отправка запроса на создание игры
             const response = await fetch("createGameSession.php", {
@@ -827,46 +1382,54 @@
                     bots: bots.map(bot => bot.id)
                 })
             });
-
             if (!response.ok) throw new Error("Ошибка при создании игры");
-
             const data = await response.json();
             console.log("Игра создана:", data);
-
+            await loadPlayerCards();
             // Отображение карт игрока
             displayPlayerCards(data.playerCards);
-
         } catch (error) {
             console.error("Ошибка:", error);
             alert("Не удалось создать игру");
         }
-
         renderBoard();
-    });
+        showSuggestButton();
+        showSecretPathButton();
+        showAccuseButton();
+        saveGameState();
+        });
 
         // Обработчик кнопки "Завершить ход"
         endTurnButton.addEventListener("click", () => {
             if (currentPlayer === "player") {
                 // Игрок завершил ход
                 currentPlayer = currentBot; // Следующий ход - первый бот
+                accuseButton.style.display = "none";
+                modal.style.display = "none";
+                suggestButton.style.display = "none";
+                secretPathButton.style.display = "none";
                 endTurnButton.style.display = "none";
+                rollDiceButton.style.display = "none";
+                saveGameState();
                 botMove(); // Перемещает первого бота
             }
         });
 
         function displayPlayerCards(cards) {
-        const container = document.getElementById("cardsContainer");
-        container.innerHTML = "";
-
-        cards.forEach(card => {
-            const cardDiv = document.createElement("div");
-            cardDiv.className = "card-item";
-            cardDiv.innerHTML = `
-                <img src="${card.image}" alt="${card.name}" width="60" height="60" style="margin-bottom: 5px;">
-            `;
-            container.appendChild(cardDiv);
-        });
-    }
+            const container = document.getElementById("cardsContainer");
+            container.innerHTML = "";
+            cards.forEach(card => {
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card-item";
+                cardDiv.innerHTML = `<img src="${card.image}" alt="${card.name}" width="60" height="60" style="margin-bottom: 5px;">`;
+                container.appendChild(cardDiv);
+            });
+            // Сохранение карт игрока в localStorage
+            localStorage.setItem("playerCards", JSON.stringify(cards));
+            saveGameState(); // Обновляем сохранение
+            // Отметка карт в бланке
+            markPlayerCards(cards);
+        }
 
         // Массив эмодзи для костей (Unicode символы ⚀-⚅)
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -905,54 +1468,67 @@
         function getPossibleMoves(startX, startY, maxSteps) {
             const result = [];
             const visited = {};
-            const queue = [{ x: startX, y: startY, steps: 0 }];
-
+            const queue = [];
             const currentCellId = matrix[startY][startX];
-            const isCurrentRoom = cells[currentCellId]?.type === "room";
-            let exits = [];
+            const currentCell = cells[currentCellId];
+            const roomCells = [];
 
-            if (isCurrentRoom) {
-                // надо исправить
-                const directions = [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }];
-                directions.forEach(({ dx, dy }) => {
-                    const nx = startX + dx, ny = startY + dy;
-                    if (canMove(nx, ny)) {
-                        const cellId = matrix[ny][nx];
-                        if (cells[cellId]?.type === "walkable") {
-                            exits.push({ x: nx, y: ny });
+            // Проверяем, находится ли игрок в комнате
+            if (currentCell && currentCell.type === "room") {
+                const roomName = currentCell.RoomName;
+
+            // Находим все клетки этой комнаты
+            for (let y = 0; y < matrix.length; y++) {
+                for (let x = 0; x < matrix[y].length; x++) {
+                    const cellId = matrix[y][x];
+                    const cell = cells[cellId];
+                    if (cell && cell.type === "room" && cell.RoomName === roomName) {
+                        roomCells.push({ x, y });
                         }
                     }
-                });
-                if (exits.length === 0) return [];
-                queue.length = 0;
-                exits.forEach(exit => queue.push({ x: exit.x, y: exit.y, steps: 1 }));
+                }
             }
 
+            // Если игрок в комнате, добавляем все клетки комнаты в очередь
+            if (roomCells.length > 0) {
+                roomCells.forEach(cell => {
+                    queue.push({ x: cell.x, y: cell.y, steps: 0 });
+                });
+            } else {
+                // Если не в комнате, стартуем с текущей клетки
+                queue.push({ x: startX, y: startY, steps: 0 });
+            }
             while (queue.length > 0) {
                 const { x, y, steps } = queue.shift();
                 const key = `${x},${y}`;
-
                 if (visited[key] || steps > maxSteps) continue;
                 visited[key] = true;
 
+                // Проверка клетки на доступность и отсутствие занятости
                 if (steps <= maxSteps && !isCellOccupied(x, y)) {
                     result.push([x, y]);
                 }
-
                 if (steps === maxSteps) continue;
 
-                const directions = [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }];
+                // Четыре направления
+                const directions = [
+                    { dx: 0, dy: -1 },
+                    { dx: 1, dy: 0 },
+                    { dx: 0, dy: 1 },
+                    { dx: -1, dy: 0 }
+                ];
                 directions.forEach(({ dx, dy }) => {
-                    const nx = x + dx, ny = y + dy;
+                    const nx = x + dx;
+                    const ny = y + dy;
                     if (canMove(nx, ny) && !isCellOccupied(nx, ny)) {
                         const cellId = matrix[ny][nx];
-                        if (cells[cellId]?.type === "walkable" || cells[cellId]?.type === "room") {
+                        const cell = cells[cellId];
+                        if (cell && (cell.type === "walkable" || cell.type === "room")) {
                             queue.push({ x: nx, y: ny, steps: steps + 1 });
                         }
                     }
                 });
             }
-
             return result;
         }
 
@@ -962,7 +1538,6 @@
                 cell.classList.remove("highlight");
                 cell.removeEventListener("click", handleCellClick);
             });
-
             possibleMoves = getPossibleMoves(playerPos.x, playerPos.y, steps);
             possibleMoves.forEach(([x, y]) => {
                 const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
@@ -977,7 +1552,6 @@
         function handleCellClick(event) {
             const x = parseInt(event.currentTarget.getAttribute("data-x"));
             const y = parseInt(event.currentTarget.getAttribute("data-y"));
-
             if (possibleMoves.some(([px, py]) => px === x && py === y)) {
                 playerPos = { x, y };
                 savePlayerPos();
@@ -1004,6 +1578,11 @@
                         // Игрок завершил ход
                         currentPlayer = currentBot; // Следующий ход - первый бот
                         endTurnButton.style.display = "none";
+                        modal.style.display = "none";
+                        suggestButton.style.display = "none";
+                        secretPathButton.style.display = "none";
+                        accuseButton.style.display = "none";
+                        saveGameState();
                         botMove(); // Перемещает первого бота
             }
                 }
@@ -1143,9 +1722,147 @@
             }
         });
 
+        // Обработка клика по ячейке блокнота
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.getElementById('cluedo-table');
+
+            table.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.tagName !== 'TD') return;
+
+                const cell = target;
+                const row = cell.parentElement;
+                const rowIndex = row.rowIndex;
+                const cellIndex = cell.cellIndex;
+
+                // Игнорирует служебные строки и первую колонку
+                if (cellIndex === 0 || rowIndex === 7 || rowIndex === 13 || rowIndex === 0 || rowIndex === 1) return;
+
+                // Цикл меток: нет -> крестик -> галочка -> нет
+                if (cell.classList.contains('mark-cross')) {
+                    cell.classList.remove('mark-cross');
+                    cell.classList.add('mark-check');
+                } else if (cell.classList.contains('mark-check')) {
+                    cell.classList.remove('mark-check');
+                } else {
+                    cell.classList.add('mark-cross');
+                }
+
+                // Сохранение изменений
+                saveNotebookState();
+            });
+
+            // Восстановление состояний при загрузке
+            loadNotebookState();
+        });
+
+        function saveNotebookState() {
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+            const notebookState = {};
+
+            rows.forEach(row => {
+                const cardId = row.getAttribute("data-card-id");
+                const cells = row.querySelectorAll("td");
+
+                notebookState[cardId] = [];
+
+                cells.forEach((cell, index) => {
+                    if (index === 0) return; // Пропускает первую колонку с названием
+
+                    if (cell.classList.contains("mark-cross")) {
+                        notebookState[cardId][index - 1] = "cross";
+                    } else if (cell.classList.contains("mark-check")) {
+                        notebookState[cardId][index - 1] = "check";
+                    } else {
+                        notebookState[cardId][index - 1] = "";
+                    }
+                });
+            });
+
+            localStorage.setItem("notebookState", JSON.stringify(notebookState));
+        }
+
+        function loadNotebookState() {
+            const notebookState = JSON.parse(localStorage.getItem("notebookState")) || {};
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+
+            rows.forEach(row => {
+                const cardId = row.getAttribute("data-card-id");
+                const cells = row.querySelectorAll("td");
+
+                if (notebookState[cardId]) {
+                    notebookState[cardId].forEach((mark, index) => {
+                        const cell = cells[index + 1]; // +1, чтобы пропустить первую колонку
+                        cell.classList.remove("mark-cross", "mark-check");
+
+                        if (mark === "cross") {
+                            cell.classList.add("mark-cross");
+                        } else if (mark === "check") {
+                            cell.classList.add("mark-check");
+                        }
+                    });
+                }
+            });
+        }
+
+        function clearNotebook() {
+            const notebook = document.getElementById("cluedo-table");
+            const rows = notebook.querySelectorAll("tr[data-card-id]");
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                cells.forEach(cell => {
+                    cell.classList.remove("mark-cross", "mark-check");
+                });
+            });
+
+            // Очистка данных из localStorage
+            localStorage.removeItem("notebookState");
+        }
+
+        async function loadPlayerCards() {
+            try {
+                const response = await fetch("getPlayerCards.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ playerID: 5 }) // ID игрока
+                });
+
+                if (!response.ok) throw new Error("Ошибка при получении карт игрока");
+
+                const data = await response.json();
+                if (data.success) {
+                    displayPlayerCards(data.cards); // Отображаем карты на экране и отмечаем в бланке
+                } else {
+                    console.error("Ошибка получения карт:", data.message);
+                }
+            } catch (error) {
+                console.error("Ошибка:", error);
+            }
+        }
+
+        function markPlayerCards(playerCards) {
+            playerCards.forEach(card => {
+                // Находим строку с соответствующим data-card-id
+                const row = document.querySelector(`tr[data-card-id="${card.id}"]`);
+                if (row) {
+                    const playerCell = row.querySelector('td:nth-child(6)'); // Ячейка с меткой игрока (последняя колонка)
+                    if (playerCell) {
+                        playerCell.classList.add('mark-check');
+                    }
+                }
+            });
+        }
+
         renderBoard();
+        showAccuseButton();
         showSuggestButton();
         showSecretPathButton();
+        restoreGameState();
     </script>
 </body>
 

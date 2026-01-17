@@ -372,13 +372,63 @@
             background-color: #FF4500;
             transform: scale(1.05);
         }
-        
+
+        #endGameButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #a20000;
+            transition: background-color 0.3s, transform 0.3s;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #endGameButton:hover {
+            background-color: #a40000;
+            transform: scale(1.05);
+        }
+
+        #notifications {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .notification {
+            background: rgba(30, 30, 30, 0.95);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 220px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.info { border-left: 4px solid #4da3ff; }
+        .notification.success { border-left: 4px solid #5fd35f; }
+        .notification.warn { border-left: 4px solid #ffb84d; }
+      
         #cluedo-notebook {
             position: fixed;
             top: 20px;
             bottom: 80px;
             right: 0;
-            width: 25vw;
+            width: clamp(260px, 25vw, 480px);
             background: #3CB371;
             border-left: 1px solid #ccc;
             box-shadow: -3px 0 10px rgba(0,0,0,0.1);
@@ -387,7 +437,7 @@
             align-items: center;
             padding: 10px;
             box-sizing: border-box;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         /* Таблица занимает всю высоту контейнера */
@@ -457,34 +507,59 @@
             font-size: 16px;
         }
 
+        .mark-question::after {
+            content: "\003F";
+            color: blue;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
         .strikethrough {
             text-decoration: line-through;
             color: gray;
             opacity: 0.6;
         }
 
-        /* Адаптивность: уменьшение шрифта и padding на маленьких экранах */
-        @media (max-width: 1200px) {
-            #cluedo-notebook {
-                width: 30vw;
-                top: 30px;
-                bottom: 30px;
-                padding: 8px;
+        /* Адаптивность */
+        @media (max-width: 1366px) {
+            .grid {
+                grid-template-columns: repeat(27, 24px);
+                grid-template-rows: repeat(27, 24px);
             }
-            #cluedo-table {
-                font-size: 11px;
+            .cell {
+                width: 24px;
+                height: 24px;
+                font-size: 16px;
             }
         }
 
-        @media (max-width: 768px) {
-            #cluedo-notebook {
-                width: 40vw;
-                top: 20px;
-                bottom: 20px;
-                padding: 6px;
+        @media (max-width: 1024px) {
+            body {
+                flex-direction: row;
+                align-items: flex-start;
             }
-            #cluedo-table {
-                font-size: 10px;
+
+            #cluedo-notebook {
+                position: fixed;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 320px;
+                z-index: 200;
+            }
+
+            #dice {
+                left: 10px;
+                bottom: 10px;
+                transform: scale(0.9);
+            }
+
+            #suggestButton,
+            #accuseButton {
+                transform: scale(0.9);
             }
         }
     </style>
@@ -496,12 +571,12 @@
     <div id="cluedo-notebook">
         <table id="cluedo-table" border="1" cellspacing="0" cellpadding="5">
           <colgroup>
-            <col style="width: 40%;" />
-            <col style="width: 12%;" />
-            <col style="width: 12%;" />
-            <col style="width: 12%;" />
-            <col style="width: 12%;" />
-            <col style="width: 12%;" />
+            <col style="width: 38%;" />
+            <col style="width: 15%;" />
+            <col style="width: 15%;" />
+            <col style="width: 15%;" />
+            <col style="width: 15%;" />
+            <col style="width: 18%;" />
           </colgroup>
           <tbody>
             <tr>
@@ -518,18 +593,18 @@
             <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="2"><td>Эмине</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td>Орудия:</td><td colspan="5"></td></tr>
-            <tr data-card-id="6"><td>Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="6"><td>Кинжал Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="7"><td>Наргиле</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="8"><td>Фирдоуси</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="9"><td>Газель</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="10"><td>Шелковый шнур</td><td></td><td></td><td></td><td></td><td></td></tr> 
+            <tr data-card-id="10"><td>Шёлковый шнур</td><td></td><td></td><td></td><td></td><td></td></tr> 
             <tr><td>Место убийства:</td><td colspan="5"></td></tr>
             <tr data-card-id="11"><td>Покои</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="12"><td>Павильон</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="13"><td>Галерея</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="12"><td>Галерея</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="13"><td>Павильон</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="14"><td>Кухня</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="16"><td>Тахтабош</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="15"><td>Макад</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="16"><td>Тахтабош</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="17"><td>Сад</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="18"><td>Хамам</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="19"><td>Сокровищница</td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -547,6 +622,8 @@
 
     <button id="startButton">Начать игру</button>
 
+    <button id="endGameButton" style="display:none;">Завершить игру</button>
+
     <div id="dice">
         <div>
             <span class="dice-face" id="dice1">⚀</span>
@@ -557,6 +634,8 @@
     </div>
 
     <button id="endTurnButton" style="display: none;">Завершить ход</button>
+    
+    <div id="notifications"></div>
 
     <div id="playerCards" style="display: none;">
         <h3>Ваши карты:</h3>
@@ -654,6 +733,18 @@
             20: { id: 20, type: "room", RoomName: 19 }
         };
 
+       const roomIdToName = {
+           11: "Покои",
+           12: "Галерея",
+           13: "Павильон",
+           14: "Кухня",
+           15: "Макад",
+           16: "Тахтабош",
+           17: "Сад",
+           18: "Хамам",
+           19: "Сокровищница"
+       };
+
         const secretPaths = {
             "1": { from: { x: 3, y: 7 }, to: { x: 24, y: 24 } },
             "2": { from: { x: 4, y: 7 }, to: { x: 24, y: 24 } },
@@ -669,24 +760,39 @@
 
         // Фиксированные фишки (ID) начальные позиции для ботов
         let bots = [
-            { id: 1, name: "Надира", x: 10, y: 1, steps: 10 },
-            { id: 2, name: "Эмине", x: 16, y: 1, steps: 10 },
-            { id: 3, name: "Орхан", x: 25, y: 7, steps: 10 },
-            { id: 4, name: "Малхун", x: 1, y: 17, steps: 10 }
+            { id: 1, name: "Надира", x: 10, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
+            { id: 2, name: "Эмине", x: 16, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
+            { id: 3, name: "Орхан", x: 25, y: 7, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
+            { id: 4, name: "Малхун", x: 1, y: 17, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false }
         ];
 
+        const playersInfo = [
+            { id: 1, label: "Игрок 1: Надира", icon: "🐪" },
+            { id: 2, label: "Игрок 2: Эмине", icon: "🐪" },
+            { id: 3, label: "Игрок 3: Орхан", icon: "🐪" },
+            { id: 4, label: "Игрок 4: Малхун", icon: "🐪" },
+            { id: 5, label: "Игрок 5: Шахризар", icon: "👳🏾‍" }
+        ];
+
+        function initNotebookHeader() {
+            const headerRow = document.querySelector("#cluedo-table tr:first-child");
+            const cells = headerRow.querySelectorAll("td");
+            playersInfo.forEach((player, index) => {
+                cells[index + 1].textContent = player.label;
+            });
+        }
+
+        // Флаг активной игры
+        let gameActive = true;
+
         // Фишка (ID) игрока
-        let playerChipID = 5;
-        let playerID = playerChipID;
+        const playerID = 5;
 
         // Ход игры: тот, кто сейчас ходит (игрок или бот)
         let currentPlayer = "player";
 
         // Индекс бота, чей ход сейчас
         let currentBot = 0;
-
-        // Количество ходов каждого бота
-        let botSteps = 10;
 
         // Флаг, чтобы заблокировать действия игрока во время хода бота
         let isBotMoving = false;
@@ -697,8 +803,17 @@
         // Флаг проигрыша игрока 
         let playerEliminated = false;
 
-        const board = document.getElementById("board");
+        const GamePhase = {
+            INIT: "init",
+            PLAYER_TURN: "player_turn",
+            BOT_TURN: "bot_turn",
+            PLAYER_ELIMINATED: "player_eliminated",
+            GAME_OVER: "game_over"
+        };
 
+        let gamePhase = GamePhase.INIT;
+
+        const board = document.getElementById("board");
         const suggestButton = document.getElementById("suggestButton");
         const secretPathButton = document.getElementById("secretPathButton");
         const startButton = document.getElementById("startButton");
@@ -709,13 +824,24 @@
         const accuseButton = document.getElementById("accuseButton");
         const suggestModal = document.getElementById("suggestModal");
         const suggestModalButton = document.getElementById("suggestModalButton");
+        const endGameButton = document.getElementById("endGameButton");
 
         // Сохраняемые параметры
         function saveGameState() {
             const gameState = {
                 isGameStarted,
                 playerPos,
-                bots: bots.map(bot => ({ id: bot.id, name: bot.name, x: bot.x, y: bot.y, steps: bot.steps })),
+                bots: bots.map(bot => ({
+                    id: bot.id,
+                    name: bot.name,
+                    x: bot.x,
+                    y: bot.y,
+                    steps: bot.steps,
+                    visitedRooms: bot.visitedRooms,
+                    knownCards: bot.knownCards,
+                    turnsPlayed: bot.turnsPlayed,
+                    eliminated: bot.eliminated
+                })),
                 playerCards: JSON.parse(localStorage.getItem("playerCards")) || []
             };
             localStorage.setItem("gameState", JSON.stringify(gameState));
@@ -734,7 +860,7 @@
                 displayPlayerCards(savedCards);
                 playerCards.style.display = "inline-block";
             }
-            if (isGameStarted) {
+            if (isGameStarted && gamePhase !== GamePhase.GAME_OVER) {
                 startButton.style.display = "none";
                 rollDiceButton.style.display = "inline-block";
                 endTurnButton.style.display = "inline-block";
@@ -744,97 +870,6 @@
                 showAccuseButton();
                 renderBoard();
             }
-        }
-
-        // Поиск, какие клетки (ID) относятся к указанной комнате
-        function fetchRoomCellsByRoomName(roomName) {
-            fetch(`getRoomCellsByRoomName.php?roomName=${roomName}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error("Ошибка при получении клеток комнаты:", data.error);
-                    } else {
-                        console.log(`Клетки комнаты с RoomName ${roomName}:`, data);
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка при выполнении запроса:", error);
-                });
-        }
-
-        // Поиск, к какой комнате относится указанная клетка по ее координатам
-        function fetchRoomNameByCoordinates(x, y) {
-            // Проверим, существуют ли такие координаты
-            if (y >= 0 && y < matrix.length && x >= 0 && x < matrix[y].length) {
-                const cellId = matrix[y][x];
-                console.log(`Cell ID at (${x}, ${y}): ${cellId}`);
-                // Передает cellId в fetchRoomName
-                fetchRoomName(cellId);
-            } else {
-                console.warn(`Координаты (${x}, ${y}) выходят за пределы матрицы`);
-            }
-        }
-
-        // Поиск, к какой комнате относится указанная клетка по ее ID
-        function fetchRoomName(cellId) {
-            fetch(`getRoomName.php?cellId=${cellId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.RoomName !== null) {
-                        console.log(`Room Name for cell ${cellId}: ${data.RoomName}`);
-                    } else {
-                        console.log(`No room found for cell ${cellId}`);
-                    }
-                })
-                .catch(error => console.error("Ошибка при запросе:", error));
-        }
-
-        // Поиск, какому игроку соответствует данная фишка по ее ID
-        function fetchChipCharacter(id) {
-            fetch(`getChipCharacter.php?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error("Ошибка при получении ChipCharacter:", data.error);
-                    } else {
-                        console.log(`ChipCharacter для фишки с ID ${id}:`, data.ChipCharacter);
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка при выполнении запроса:", error);
-                });
-        }
-
-        // Поиск, какие координаты у данной фишки по ее ID
-        function fetchChipCoordinates(id) {
-            fetch(`getChipCoordinates.php?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error("Ошибка при получении координат фишки:", data.error);
-                    } else {
-                        console.log(`Координаты фишки с ID ${id}:`, data);
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка при выполнении запроса:", error);
-                });
-        }
-
-        // Поиск, к какой комнате ведет данная клетка с секретным проходом по ее ID
-        function fetchSecretPassage(id) {
-            fetch(`getSecretPassage.php?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error("Ошибка при получении Secret Passage:", data.error);
-                    } else {
-                        console.log(`Destination для SecretPassageID ${id}:`, data.Destination);
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка при выполнении запроса:", error);
-                });
         }
 
         // Отображение кнопки для тайного хода
@@ -866,18 +901,49 @@
                     showSuggestButton();  // Проверка, нужно ли показывать кнопку для предположения
                     showSecretPathButton(); // Проверка, нужно ли показывать кнопку для тайного хода
                     setTimeout(() => {
-                        currentPlayer = currentBot;
+                        resetDiceState();
+                        currentPlayer = "bot";
                         suggestButton.style.display = "none";
                         secretPathButton.style.display = "none";
                         endTurnButton.style.display = "none";
                         accuseButton.style.display = "none";
                         rollDiceButton.style.display = "none";
                         saveGameState();
-                        botMove();
+                        gamePhase = GamePhase.BOT_TURN;
+                        setTimeout(botMove, 300);
                     }, 5); // небольшая задержка, чтобы игрок успел увидеть перемещение
                     return;
                 }
             }
+        }
+
+        function botUseSecretPath(bot) {
+            for (let key in secretPaths) {
+                const path = secretPaths[key];
+
+                if (path.from.x === bot.x && path.from.y === bot.y) {
+                    bot.x = path.to.x;
+                    bot.y = path.to.y;
+
+                    bot.path = [];
+                    bot.steps = 0;
+
+                    // Помечаем комнату назначения как посещённую
+                    const cellId = matrix[bot.y][bot.x];
+                    const cell = cells[cellId];
+                    if (cell && cell.type === "room") {
+                        bot.visitedRooms = bot.visitedRooms || [];
+                        if (!bot.visitedRooms.includes(cell.RoomName)) {
+                            bot.visitedRooms.push(cell.RoomName);
+                        }
+                    }
+
+                    showNotification(`🌀 ${bot.name} воспользовался тайным ходом`, "info");
+                    renderBoard();
+                    return true;
+                }
+            }
+            return false;
         }
 
         // Обработчик для тайного хода
@@ -928,17 +994,38 @@
             });
         }
 
+        function showEndGameButton() {
+            endGameButton.style.display = "inline-block";
+        }
+
+        endGameButton.addEventListener("click", () => {
+            gamePhase = GamePhase.GAME_OVER;
+            resetGame();
+            gameActive = false;
+            endGameButton.style.display = "none";
+        });
+
         // Обработчик для кнопки предположения
         suggestButton.addEventListener("click", async () => {
             suggestModal.style.display = "block"; // Открываем новое окно
+            
             // Загрузка карт из БД
             const characters = await loadCardsByType('Character');
             const weapons = await loadCardsByType('Weapon');
             const rooms = await loadCardsByType('Room');
+            
             // Заполнение выпадающих списков
             createDropdown(characters, 'characterSelect');
             createDropdown(weapons, 'weaponSelect');
-            createDropdown(rooms, 'roomSelect');
+            const playerCellId = matrix[playerPos.y][playerPos.x];
+            const currentRoomId = cells[playerCellId]?.RoomName;
+
+            // Фильтруем только текущую комнату
+            const filteredRooms = rooms.filter(r => r.ID == currentRoomId);
+            createDropdown(filteredRooms, 'roomSelect');
+
+            // Блокируем выбор
+            document.getElementById('roomSelect').disabled = true;
         });
 
         // Обработчик для кнопки "Ок" в новом модальном окне
@@ -978,6 +1065,7 @@
                         if (bot) {
                             message = `У игрока ${bot.name} есть карта "${cardName}".`;
                         }
+                        markKnownCard(playerID, cardName);
                     }
                     document.querySelector("#modal .modal-content h2").textContent = message;
                     // 3. Перемещение персонажа
@@ -989,9 +1077,24 @@
                         const targetBot = bots.find(b => b.name === characterName);
                         if (targetBot) {
                             console.log(`Перемещаем персонажа ${characterName} (бота ${targetBot.name}) на позицию игрока.`);
-                            // Перемещаем бота на клетку игрока
-                            targetBot.x = playerPos.x;
-                            targetBot.y = playerPos.y;
+                            // Перемещаем персонажа в комнату игрока
+                            const playerCellId = matrix[playerPos.y][playerPos.x];
+                            const roomId = cells[playerCellId]?.RoomName;
+                            if (roomId) {
+                                for (let y = 0; y < matrix.length; y++) {
+                                    for (let x = 0; x < matrix[y].length; x++) {
+                                        const cellId = matrix[y][x];
+                                        const cell = cells[cellId];
+                                        if (cell && cell.type === "room" && cell.RoomName === roomId) {
+                                            targetBot.x = playerPos.x;
+                                            targetBot.y = playerPos.y;
+                                            targetBot.path = [];
+                                            targetBot.steps = 0;
+                                            targetBot.visitedRooms = targetBot.visitedRooms || [];
+                                        }
+                                    }
+                                }
+                            }
                             // Визуально обновляем позицию бота
                             const botElement = document.getElementById(`bot-${targetBot.id}`);
                             if (botElement) {
@@ -1003,6 +1106,15 @@
                 } catch (error) {
                     console.error("Ошибка:", error);
                 }
+                rollDiceButton.style.display = "none";
+                endTurnButton.style.display = "none";
+                accuseButton.style.display = "none";
+                suggestButton.style.display = "none";
+                secretPathButton.style.display = "none";
+                modal.style.display = "none";
+                accuseModal.style.display = "none";
+                gamePhase = GamePhase.PLAYER_TURN;
+                currentPlayer = "bot";
                 suggestModal.style.display = "none";
                 modal.style.display = "block";
                 saveGameState();
@@ -1011,33 +1123,25 @@
             }
         });
 
-        // Завершить ход при нажатии на "Ок"
         modalButton.addEventListener("click", () => {
-            // Проверяем, завершена ли игра (например, после правильного обвинения)
-            if (!isGameStarted) {
-                modal.style.display = "none";
+            modal.style.display = "none";
+                    
+            if (gamePhase === GamePhase.GAME_OVER) {
+                showEndGameButton();
                 return;
             }
 
-            if (currentPlayer === "player") {
-                // Игрок завершил ход
-                currentPlayer = currentBot; // Следующий ход - первый бот
-                modal.style.display = "none";
-                accuseButton.style.display = "none";
-                suggestButton.style.display = "none";
-                secretPathButton.style.display = "none";
-                endTurnButton.style.display = "none";
-                rollDiceButton.style.display = "none";
-
-                // Если игрок был исключен - пропускаем его ход
-                if (playerEliminated) {
-                    currentPlayer = currentBot; // Сразу передаем ход боту
-                }
-
-                // Запуск хода следующего бота, если игра не завершена
-                if (isGameStarted) {
-                    botMove();
-                }
+            if (gamePhase === GamePhase.PLAYER_ELIMINATED) {
+                gamePhase = GamePhase.BOT_TURN;
+                currentPlayer = "bot";
+                setTimeout(botMove, 300);
+                return;
+            }
+                    
+            if (gamePhase === GamePhase.PLAYER_TURN) {
+                gamePhase = GamePhase.BOT_TURN;
+                currentPlayer = "bot";
+                setTimeout(botMove, 300);
             }
         });
 
@@ -1063,6 +1167,24 @@
             createDropdown(weapons, 'accuseWeaponSelect');
             createDropdown(rooms, 'accuseRoomSelect');
         });
+        
+        // Автоматическая пометка найденных карт
+        function markKnownCard(ownerPlayerID, cardName) {
+            const rows = document.querySelectorAll("#cluedo-table tr[data-card-id]");
+            rows.forEach(row => {
+                const cardTitle = row.querySelector("td:first-child").textContent.trim();
+                if (cardTitle === cardName) {
+                    const colIndex = playersInfo.findIndex(p => p.id === parseInt(ownerPlayerID));
+                    if (colIndex !== -1) {
+                        const cell = row.querySelectorAll("td")[colIndex + 1];
+                        cell.classList.remove("mark-cross", "mark-question");
+                        cell.classList.add("mark-check");
+                        cell.innerHTML = "";
+                    }
+                }
+            });
+            saveNotebookState();
+        }
 
         // Функция сброса игры
         function resetGame() {
@@ -1123,11 +1245,19 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        document.querySelector("#modal .modal-content h2").textContent = "Вы сделали верное обвинение!";
-                        resetGame(); // Сброс игры
+                        document.querySelector("#modal .modal-content h2").textContent =
+                            "Вы сделали верное обвинение!";
+    
+                        gamePhase = GamePhase.GAME_OVER;
+                        isGameStarted = false;
+                        showEndGameButton();
                     } else {
-                        document.querySelector("#modal .modal-content h2").textContent = "Вы сделали неверное обвинение!";
+                        document.querySelector("#modal .modal-content h2").textContent =
+                            "Вы сделали неверное обвинение! Вы выбываете из игры.";
+
                         playerEliminated = true;
+                        gamePhase = GamePhase.PLAYER_ELIMINATED;
+                        showEndGameButton();
                     }
 
                     accuseModal.style.display = "none";
@@ -1138,6 +1268,7 @@
                     suggestButton.style.display = "none";
                     endTurnButton.style.display = "none";
                     secretPathButton.style.display = "none";
+                    rollDiceButton.style.display = "none";
 
                 } catch (error) {
                     console.error("Ошибка при проверке обвинения:", error);
@@ -1166,80 +1297,269 @@
             return false; // Если клетка свободна
         }
 
-        // Функция для случайного перемещения бота
-        function randomMove(player) {
-            const directions = [
-                { x: 1, y: 0 }, // Вправо
-                { x: -1, y: 0 }, // Влево
-                { x: 0, y: 1 }, // Вниз
-                { x: 0, y: -1 }  // Вверх
-            ];
-            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-            let newX = player.x + randomDirection.x;
-            let newY = player.y + randomDirection.y;
-            // Проверка, чтобы не выйти за границы поля
-            if (newX >= 0 && newY >= 0 && newX < matrix[0].length && newY < matrix.length) {
-                const cellId = matrix[newY][newX];
-                const cell = cells[cellId];
-                // Проверка, что клетка walkable или room
-                if ((cell && (cell.type === "walkable" || cell.type === "room")) && !isCellOccupied(newX, newY)) {
-                    return { x: newX, y: newY };
-                }
-            }
-            return player; // Если шаг не удается, бот остаётся на месте
+        function showNotification(text, type = "info", duration = 4500) {
+            const container = document.getElementById("notifications");
+            const note = document.createElement("div");
+            note.className = `notification ${type}`;
+            note.textContent = text;
+
+            container.appendChild(note);
+            requestAnimationFrame(() => note.classList.add("show"));
+
+            setTimeout(() => {
+                note.classList.remove("show");
+                setTimeout(() => note.remove(), 300);
+            }, duration);
         }
 
-        // Функция для поэтапного перемещения бота
+        async function botMakeSuggestion(bot) {
+            const cellId = matrix[bot.y][bot.x];
+            const cell = cells[cellId];
+            if (!cell || cell.type !== "room") return;
+        
+            const roomId = cell.RoomName;
+        
+            const roomName = roomIdToName[roomId];
+        
+            // Загружает карты
+            const characters = await loadCardsByType('Character');
+            const weapons = await loadCardsByType('Weapon');
+        
+            // Выбор
+            const character = characters[Math.floor(Math.random() * characters.length)];
+            const weapon = weapons[Math.floor(Math.random() * weapons.length)];
+
+            // Проверяет, чтобы бот не выбирал свою карту
+            const playerCards = await loadCardsByType('Character'); // или свои карты бота
+            let chosenCharacter = character;
+            if (botHasCard(bot.id, character.ID)) {
+                // если бот имеет эту карту, берёт следующую из списка
+                const otherCharacters = characters.filter(c => !botHasCard(bot.id, c.ID));
+                chosenCharacter = otherCharacters[Math.floor(Math.random() * otherCharacters.length)];
+            }
+
+            const cardIDs = [chosenCharacter.ID, weapon.ID, roomId];
+            showNotification(`🕵️ ${bot.name} предполагает: ${chosenCharacter.CardName}, ${weapon.CardName}, ${roomName}`, "info");
+            
+            // Проверка через сервер
+            const response = await fetch('checkCards.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cardIDs, excludePlayerID: bot.id })
+            });
+            
+        const result = await response.json();
+
+        if (!result.noMatch && result.cardID) {
+            bot.knownCards = bot.knownCards || [];
+            if (!bot.knownCards.includes(result.cardID)) {
+                bot.knownCards.push(result.cardID);
+            }
+        }
+        
+        // Результат для игрока
+        if (result.noMatch || parseInt(result.playerID) === bot.id) {
+            showNotification("❌ Никто не показал карту", "warn");
+        } else {
+            const owner = playersInfo.find(p => p.id === parseInt(result.playerID));
+            showNotification(`✅ ${owner?.label || "Игрок"} показал карту`, "success");
+        }
+        }
+        
+        function botHasCard(botID, cardID) {
+            const bot = bots.find(b => b.id === botID);
+            if (!bot || !bot.cards) return false;
+            return bot.cards.includes(cardID);
+        }
+
+        async function botShouldAccuse(bot) {
+            if (bot.eliminated) return false;
+            const randomTurnLimit = Math.floor(Math.random() * (15 - 7 + 1)) + 7;
+            if (bot.turnsPlayed > randomTurnLimit) return true; 
+        
+            const characters = await loadCardsByType("Character");
+            const weapons = await loadCardsByType("Weapon");
+            const rooms = await loadCardsByType("Room");
+        
+            const unknownCharacters = characters.filter(c => !bot.knownCards.includes(c.ID));
+            const unknownWeapons = weapons.filter(w => !bot.knownCards.includes(w.ID));
+            const unknownRooms = rooms.filter(r => !bot.knownCards.includes(r.ID));
+        }
+
+        async function botMakeAccusation(bot) {
+            const characters = await loadCardsByType("Character");
+            const weapons = await loadCardsByType("Weapon");
+            const rooms = await loadCardsByType("Room");
+        
+            const character = characters.find(c => !bot.knownCards.includes(c.ID));
+            const weapon = weapons.find(w => !bot.knownCards.includes(w.ID));
+            const room = rooms.find(r => !bot.knownCards.includes(r.ID));
+        
+            showNotification(
+                `⚖️ ${bot.name} выдвигает обвинение: ${character.CardName}, ${weapon.CardName}, ${room.CardName}`,
+                "warn"
+            );
+        
+            const response = await fetch("checkAccusation.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    selectedCards: [character.ID, weapon.ID, room.ID]
+                })
+            });
+
+            const result = await response.json();
+        
+            if (result.success) {
+                showNotification(`🏆 ${bot.name} победил!`, "success");
+                gamePhase = GamePhase.GAME_OVER;
+                gameActive = false;
+                showEndGameButton();
+            } else {
+                showNotification(`❌ ${bot.name} ошибся и выбыл`, "error");
+                bot.eliminated = true;
+            }
+        }
+
         function botMove() {
-            if (isBotMoving) return; // Если бот уже в движении - не даст начать новый ход
-            isBotMoving = true; // Флаг, что бот в движении
-            let bot = bots[currentBot];
-            let currentStep = 0;
-            // Обновляет статус хода, показывая имя текущего бота
-            document.getElementById("turnStatus").innerText = `Ход: ${bot.name}`;
-            // Функция для анимации одного шага бота
-            function moveStep() {
-                if (currentStep < bot.steps) {
-                    const newPos = pathfindingMove(bot);
-                    if (newPos !== bot) { // Если перемещение удалось
-                        bot.x = newPos.x;
-                        bot.y = newPos.y;
-                    }
-                    renderBoard(); // Обновляет поле с каждым шагом
-                    currentStep++;
-                    // После шага делается задержка перед следующим шагом
-                    setTimeout(moveStep, 250); // Задержка 500ms
+            if (!gameActive) return;
+            if (!isGameStarted) return;
+            if (gamePhase !== GamePhase.BOT_TURN) return;
+            if (isBotMoving) return;
+        
+            isBotMoving = true;
+        
+            const bot = bots[currentBot];
+        
+        bot.knownCards = bot.knownCards || [];
+        bot.visitedRooms = bot.visitedRooms || [];
+        bot.turnsPlayed = bot.turnsPlayed || 0;
+
+        if (bot.eliminated) {
+            isBotMoving = false;
+            finishBotTurn();
+            return;
+        }
+
+        // Увеличивает счётчик ходов
+        bot.turnsPlayed = (bot.turnsPlayed || 0) + 1;
+
+        // ПРОВЕРКА ОБВИНЕНИЯ
+        botShouldAccuse(bot).then(shouldAccuse => {
+            if (shouldAccuse) {
+                botMakeAccusation(bot).then(() => {
+                    finishBotTurn();
+                });
+            } else {
+                // обычный ход
+                startBotMovement(bot);
+            }
+        });
+
+    // Бросок кубиков для бота
+    let currentStep = 0;
+    bot.steps = Math.floor(Math.random() * 6 + 1) + Math.floor(Math.random() * 6 + 1);
+
+    // Обновляет статус хода
+    document.getElementById("turnStatus").innerText = `Ход: ${bot.name}`;
+
+    function moveStep() {
+        if (currentStep < bot.steps) {
+        const newPos = pathfindingMove(bot);
+
+        if (newPos && (newPos.x !== bot.x || newPos.y !== bot.y)) {
+            bot.x = newPos.x;
+            bot.y = newPos.y;
+        }
+
+        renderBoard();
+
+        const cellId = matrix[bot.y][bot.x];
+        const cell = cells[cellId];
+
+        if (cell && cell.type === "room" && !bot.inRoom) {
+            isBotMoving = false;
+        
+            bot.inRoom = true; 
+        
+            bot.visitedRooms = bot.visitedRooms || [];
+            if (!bot.visitedRooms.includes(cell.RoomName)) {
+                bot.visitedRooms.push(cell.RoomName);
+            }
+        
+            botMakeSuggestion(bot).then(() => {
+                setTimeout(finishBotTurn, 1200);
+            });
+
+            return;
+        }
+
+        currentStep++;
+        setTimeout(moveStep, 450);
+        
+        } else {
+            // Движение завершено
+            isBotMoving = false;
+
+            const cellId = matrix[bot.y][bot.x];
+            const cell = cells[cellId];
+
+        // Если бот оказался в комнате
+        if (cell && cell.type === "room") {
+        
+            // Сначала тайный ход (если есть)
+            botUseSecretPath(bot);
+        
+            // После тайного хода ОБЯЗАТЕЛЬНО предположение
+            botMakeSuggestion(bot).then(() => {
+                setTimeout(finishBotTurn, 1200);
+            });
+        
                 } else {
-                    // Когда все шаги завершены, бот завершает ход и передает очередь следующему
-                    isBotMoving = false; // Разрешается следующий ход
-                    currentBot = (currentBot + 1) % bots.length;
-            // Если текущий бот был последним и игрок еще не исключен
+                            finishBotTurn();
+                                }
+                        }
+                }
+            moveStep();
+        }
+
+        function finishBotTurn() {
+            currentBot = (currentBot + 1) % bots.length;
+        
+            // Если прошли всех ботов
             if (currentBot === 0) {
-                if (!playerEliminated) {
-                    currentPlayer = "player"; 
+                if (!playerEliminated && gamePhase !== GamePhase.GAME_OVER) {
+                    // Ход игрока
+                    gamePhase = GamePhase.PLAYER_TURN;
+                    currentPlayer = "player";
+        
+                    document.getElementById("turnStatus").innerText = "Ход: Шахризар (Игрок)";
+
                     endTurnButton.style.display = "inline-block";
-                    document.getElementById("turnStatus").innerText = `Ход: Шахризар (Игрок)`;
-                    renderBoard();
+                    rollDiceButton.style.display = "inline-block";
+                    rollDiceButton.disabled = false;
+        
+                    isDiceRolled = false;
+                    isPlayerTurn = true;
+        
                     showSuggestButton();
                     showSecretPathButton();
                     showAccuseButton();
-                    rollDiceButton.style.display = "inline-block";
-                    rollDiceButton.disabled = false;
-                    isDiceRolled = false;
-                    isPlayerTurn = true;
+        
+                    renderBoard();
                 } else {
-                    // Игрок исключен - сразу начинаем новый цикл ботов
-                    botMove();
-                    }
-                } else {
-                        botMove(); // Передаем ход следующему боту
-                    }
+                    // Игрок выбыл — боты продолжают
+                    gamePhase = GamePhase.BOT_TURN;
+                    currentPlayer = "bot";
+                    setTimeout(botMove, 300);
                 }
+            } else {
+                // Следующий бот
+                setTimeout(botMove, 800);
             }
-            moveStep(); // Запуск первого шага
         }
 
-        //Функция поиска пути в указанное место (новую комнату) для бота
+        // Функция поиска пути в указанное место (новую комнату) для бота
         function findPathToNewRoom(startX, startY, visitedRooms) {
             const visited = new Set();
             const queue = [{ x: startX, y: startY, path: [] }];
@@ -1255,7 +1575,7 @@
                     const cell = cells[cellId];
 
                     // Если найдена комната, которую бот еще не посещал
-                    if (cell && cell.type === "room" && !visitedRooms.includes(cellId)) {
+                    if (cell && cell.type === "room" && !visitedRooms.includes(cell.RoomName)) {
                         return path.concat({ x, y });
                     }
 
@@ -1282,9 +1602,11 @@
                             const nextCell = cells[nextCellId];
                             if (
                                 nextCell &&
-                                (nextCell.type === "walkable" || nextCell.type === "room") &&
-                                !isCellOccupied(newX, newY)
-                            ) {
+                                (
+                                    nextCell.type === "room" ||
+                                    (nextCell.type === "walkable" && !isCellOccupied(newX, newY))
+                                )
+                            ){
                                 queue.push({
                                     x: newX,
                                     y: newY,
@@ -1307,37 +1629,33 @@
                 const currentCell = cells[currentCellId];
 
                 // Если бот в комнате, добавить её в список посещённых и выйти
-                if (currentCell && currentCell.type === "room" && !bot.visitedRooms.includes(currentCellId)) {
-                    bot.visitedRooms.push(currentCellId);
-
-                    // Найти соседнюю "walkable" клетку для выхода
-                    const directions = [
-                        { x: 1, y: 0 },
-                        { x: -1, y: 0 },
-                        { x: 0, y: 1 },
-                        { x: 0, y: -1 }
-                    ];
-
-                    for (const dir of directions) {
-                        const exitX = bot.x + dir.x;
-                        const exitY = bot.y + dir.y;
-                        const exitCellId = matrix[exitY][exitX];
-                        const exitCell = cells[exitCellId];
-
-                        if (
-                            exitX >= 0 &&
-                            exitY >= 0 &&
-                            exitX < matrix[0].length &&
-                            exitY < matrix.length &&
-                            exitCell &&
-                            exitCell.type === "walkable" &&
-                            !isCellOccupied(exitX, exitY)
-                        ) {
-                            bot.path = [{ x: exitX, y: exitY }];
-                            return bot.path.shift();
-                        }
+        if (currentCell.type === "room" && bot.inRoom) {
+            bot.inRoom = false;
+        
+            const directions = [
+                { x: 1, y: 0 },
+                { x: -1, y: 0 },
+                { x: 0, y: 1 },
+                { x: 0, y: -1 }
+            ];
+        
+            for (const dir of directions) {
+                const exitX = bot.x + dir.x;
+                const exitY = bot.y + dir.y;
+        
+                if (
+                    exitX >= 0 &&
+                    exitY >= 0 &&
+                    exitX < matrix[0].length &&
+                    exitY < matrix.length
+                ) {
+                    const exitCell = cells[matrix[exitY][exitX]];
+                    if (exitCell?.type === "walkable" && !isCellOccupied(exitX, exitY)) {
+                        return { x: exitX, y: exitY };
                     }
                 }
+            }
+        }
 
                 // Ищет новую непосещённую комнату
                 const path = findPathToNewRoom(bot.x, bot.y, bot.visitedRooms);
@@ -1369,7 +1687,11 @@
         accuseButton.style.display = "inline-block";
         document.getElementById("turnStatus").innerText = `Ход: Шахризар (Игрок)`;
         currentPlayer = "player"; // Игрок начинает первый ход
+        gamePhase = GamePhase.PLAYER_TURN;
         isGameStarted = true;
+        gameActive = true;
+        playerEliminated = false;
+        currentBot = 0;
         try {
             // Отправка запроса на создание игры
             const response = await fetch("createGameSession.php", {
@@ -1399,11 +1721,27 @@
         saveGameState();
         });
 
+        function resetDiceState() {
+            diceSum = 0;
+            diceSumEl.textContent = "0";
+            dice1El.textContent = '⚀';
+            dice2El.textContent = '⚀';
+            diceSum_cont.style.display = "none";
+            isDiceRolled = false;
+            rollDiceButton.disabled = false;
+            document.querySelectorAll(".cell.highlight").forEach(cell => {
+                cell.classList.remove("highlight");
+                cell.removeEventListener("click", handleCellClick);
+            });
+        }
+
         // Обработчик кнопки "Завершить ход"
         endTurnButton.addEventListener("click", () => {
             if (currentPlayer === "player") {
                 // Игрок завершил ход
-                currentPlayer = currentBot; // Следующий ход - первый бот
+                resetDiceState();
+                currentBot = 0; 
+                currentPlayer = "bot"; // Следующий ход - первый бот
                 accuseButton.style.display = "none";
                 modal.style.display = "none";
                 suggestButton.style.display = "none";
@@ -1411,7 +1749,8 @@
                 endTurnButton.style.display = "none";
                 rollDiceButton.style.display = "none";
                 saveGameState();
-                botMove(); // Перемещает первого бота
+                gamePhase = GamePhase.BOT_TURN;
+                setTimeout(botMove, 300); // Перемещает первого бота
             }
         });
 
@@ -1444,7 +1783,6 @@
         let possibleMoves = [];
         let isDiceRolled = false; // Флаг, что кости подброшены
         let isPlayerTurn = false; // Флаг, что сейчас ход игрока
-        let isMoveCompleted = false; // Флаг, что игрок завершил ход
 
         // Функция броска костей
         rollDiceButton.addEventListener("click", () => {
@@ -1562,11 +1900,7 @@
                     cell.classList.remove("highlight");
                     cell.removeEventListener("click", handleCellClick);
                 });
-                diceSum = 0;
-                dice1El.textContent = '⚀';
-                dice2El.textContent = '⚀';
-                diceSum_cont.style.display = "none";
-                isMoveCompleted = true; // Ход завершён
+                resetDiceState();
 
                 // Проверка комнаты и кнопок
                 const cellId = matrix[playerPos.y][playerPos.x];
@@ -1576,14 +1910,17 @@
                 } else {
                     if (currentPlayer === "player") {
                         // Игрок завершил ход
-                        currentPlayer = currentBot; // Следующий ход - первый бот
+                        rollDiceButton.style.display = "none";
+                        currentBot = 0;
+                        currentPlayer = "bot"; // Следующий ход - первый бот
                         endTurnButton.style.display = "none";
                         modal.style.display = "none";
                         suggestButton.style.display = "none";
                         secretPathButton.style.display = "none";
                         accuseButton.style.display = "none";
                         saveGameState();
-                        botMove(); // Перемещает первого бота
+                        gamePhase = GamePhase.BOT_TURN;
+                        setTimeout(botMove, 300); // Перемещает первого бота
             }
                 }
                 showSecretPathButton();
@@ -1688,40 +2025,6 @@
             localStorage.setItem("playerPos", JSON.stringify(playerPos));
         }
 
-        // Управление движением игрока
-        document.addEventListener("keydown", (e) => {
-            if (!isGameStarted || isMoveCompleted || isBotMoving) return;
-
-            let { x, y } = playerPos;
-
-            if (e.key === "ArrowUp" || e.key === "w") y--;
-            if (e.key === "ArrowDown" || e.key === "s") y++;
-            if (e.key === "ArrowLeft" || e.key === "a") x--;
-            if (e.key === "ArrowRight" || e.key === "d") x++;
-
-            if (canMove(x, y) && !isCellOccupied(x, y)) {
-                playerPos = { x, y };
-                savePlayerPos();
-                renderBoard();
-                showSuggestButton();
-                showSecretPathButton();
-
-                // Сброс возможных ходов
-                document.querySelectorAll(".cell.highlight").forEach(cell => {
-                    cell.classList.remove("highlight");
-                    cell.removeEventListener("click", handleCellClick);
-                });
-
-                diceSum = 0;
-                dice1El.textContent = '⚀';
-                dice2El.textContent = '⚀';
-                diceSum_cont.style.display = "none";
-                rollDiceButton.disabled = true;
-                isDiceRolled = false;
-                isMoveCompleted = true;
-            }
-        });
-
         // Обработка клика по ячейке блокнота
         document.addEventListener('DOMContentLoaded', () => {
             const table = document.getElementById('cluedo-table');
@@ -1744,6 +2047,9 @@
                     cell.classList.add('mark-check');
                 } else if (cell.classList.contains('mark-check')) {
                     cell.classList.remove('mark-check');
+                    cell.classList.add('mark-question');
+                } else if (cell.classList.contains('mark-question')) {
+                    cell.classList.remove('mark-question');
                 } else {
                     cell.classList.add('mark-cross');
                 }
@@ -1769,11 +2075,12 @@
 
                 cells.forEach((cell, index) => {
                     if (index === 0) return; // Пропускает первую колонку с названием
-
                     if (cell.classList.contains("mark-cross")) {
                         notebookState[cardId][index - 1] = "cross";
                     } else if (cell.classList.contains("mark-check")) {
                         notebookState[cardId][index - 1] = "check";
+                    } else if (cell.classList.contains("mark-question")) {
+                        notebookState[cardId][index - 1] = "question";
                     } else {
                         notebookState[cardId][index - 1] = "";
                     }
@@ -1797,11 +2104,9 @@
                         const cell = cells[index + 1]; // +1, чтобы пропустить первую колонку
                         cell.classList.remove("mark-cross", "mark-check");
 
-                        if (mark === "cross") {
-                            cell.classList.add("mark-cross");
-                        } else if (mark === "check") {
-                            cell.classList.add("mark-check");
-                        }
+                        if (mark === "cross") cell.classList.add("mark-cross");
+                        if (mark === "check") cell.classList.add("mark-check");
+                        if (mark === "question") cell.classList.add("mark-question");
                     });
                 }
             });
@@ -1859,6 +2164,7 @@
         }
 
         renderBoard();
+        initNotebookHeader();
         showAccuseButton();
         showSuggestButton();
         showSecretPathButton();
