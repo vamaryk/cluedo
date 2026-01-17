@@ -24,7 +24,7 @@ CREATE TABLE Friends (
 CREATE TABLE ChatMessages (
     ID SERIAL PRIMARY KEY,
     MessageSender INT REFERENCES Users(ID) ON DELETE CASCADE,
-    MessageReciver INT REFERENCES Users(ID) ON DELETE CASCADE,
+    MessageReceiver INT REFERENCES Users(ID) ON DELETE CASCADE,
     MesssageText TEXT NOT NULL,
     MessageDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -39,7 +39,7 @@ CREATE TABLE Cards (
 
 CREATE TABLE Chips (
     ID SERIAL PRIMARY KEY,
-    ChipCharacter INT REFERENCES Card(ID) ON DELETE CASCADE,
+    ChipCharacter INT REFERENCES Cards(ID) ON DELETE CASCADE,
     ChipDefaultCoordinateX INT NOT NULL,
     ChipDefaultCoordinateY INT NOT NULL,
     UNIQUE (ChipCharacter),
@@ -55,9 +55,9 @@ CREATE TABLE Games (
     GamePrivacy ENUM('Open', 'Closed') NOT NULL DEFAULT 'Open',
     GamePasswordHash VARCHAR(255),
     GamePlayersAmount INT NOT NULL,
-    SolutionCharacter INT REFERENCES Card(ID) ON DELETE SET NULL,
-    SolutionWeapon INT REFERENCES Card(ID) ON DELETE SET NULL,
-    SolutionRoom INT REFERENCES Card(ID) ON DELETE SET NULL
+    SolutionCharacter INT REFERENCES Cards(ID) ON DELETE SET NULL,
+    SolutionWeapon INT REFERENCES Cards(ID) ON DELETE SET NULL,
+    SolutionRoom INT REFERENCES Cards(ID) ON DELETE SET NULL
 );
 
 CREATE TABLE GameChatMessages (
@@ -76,7 +76,7 @@ CREATE TABLE GamePlayers (
     PlayerCurrentCoordinateX INT,
     PlayerCurrentCoordinateY INT,
     PlayerIsWinner BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (GamePlayerID)
+    PRIMARY KEY (GamePlayerID, PlayerUser)
 );
 
 CREATE TABLE GameCards ( 
