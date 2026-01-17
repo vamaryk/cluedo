@@ -92,7 +92,7 @@ $avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
 </head>
 <body>
     <div class="gradient"></div>
-    <audio id="background-music" src="./audio/background-music.mp3" loop></audio>
+    <!-- <audio id="background-music" src="./audio/background-music.mp3" loop></audio> -->
 
     <nav class="navbar navbar-expand-lg navbar-light rounded-[20px] p-3">
         <div class="container-fluid">
