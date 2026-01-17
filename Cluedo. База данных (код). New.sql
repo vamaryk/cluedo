@@ -134,8 +134,8 @@ INSERT INTO Cards (CardName, CardImageURL, CardType, CardDescription) VALUES
 
 INSERT INTO Cards (CardName, CardImageURL, CardType, CardDescription) VALUES
 ('Покои', './img/Покои.png', 'room', 'Описание покоев'),
-('Павильон', './img/Павильон.png', 'room', 'Описание павильона'),
 ('Галерея', './img/Галерея.png', 'room', 'Описание галереи'),
+('Павильон', './img/Павильон.png', 'room', 'Описание павильона'),
 ('Кухня', './img/Кухня.png', 'room', 'Описание кухни'),
 ('Макад', './img/Макад.png', 'room', 'Описание макада'),
 ('Тахтабош', './img/Тахтабош.png', 'room', 'Описание тахтабоша'),
