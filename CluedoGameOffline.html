@@ -588,10 +588,10 @@
               <td colspan="5"></td>
             </tr>
             <tr data-card-id="1"><td>Надира</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="2"><td>Эмине</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td>Орудия:</td><td colspan="5"></td></tr>
             <tr data-card-id="6"><td>Кинжал Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="7"><td>Наргиле</td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -1305,6 +1305,41 @@
             return false; // Если клетка свободна
         }
 
+        function checkSecretRoomCard(roomId) {
+            const secretRoomCards =
+                JSON.parse(localStorage.getItem("secretRoomCards")) || {};
+            const revealed =
+                JSON.parse(localStorage.getItem("revealedSecretCards")) || {};
+        
+            const cardId = secretRoomCards[roomId];
+            if (!cardId || revealed[cardId]) return;
+        
+            // Помечает как открытую
+            revealed[cardId] = true;
+            localStorage.setItem(
+                "revealedSecretCards",
+                JSON.stringify(revealed)
+            );
+
+            // Получает данные карты (из общего списка)
+            const cardRow = document.querySelector(
+                `tr[data-card-id="${cardId}"]`
+            );
+            if (!cardRow) return;
+
+            const cardName =
+                cardRow.querySelector("td:first-child").textContent.trim();
+
+            showNotification(
+                `🎁 В комнате вы нашли карту: «${cardName}»`,
+                "success",
+                7000
+            );
+
+            // Автоматически отмечает как карту игрока
+            markKnownCard(playerID, cardName);
+        }
+
         function showNotification(text, type = "info", duration = 4500) {
             const container = document.getElementById("notifications");
             const note = document.createElement("div");
@@ -1689,6 +1724,7 @@
         clearNotebook();
         playerCards.style.display = "none"; // Скрывает карты игрока
         startButton.style.display = "none";
+        resetDiceState();
         rollDiceButton.style.display = "inline-block";
         endTurnButton.style.display = "inline-block";
         playerCards.style.display = "inline-block";
@@ -1727,6 +1763,25 @@
         showSecretPathButton();
         showAccuseButton();
         saveGameState();
+        fetch('getUnusedCards.php')
+          .then(res => res.json())
+          .then(data => {
+            if (!data.success || !data.unusedCards.length) return;
+        
+            const unusedCards = data.unusedCards;
+        
+            const roomIds = Object.keys(roomIdToName);
+            const shuffledRooms = roomIds.sort(() => Math.random() - 0.5);
+        
+            const secretRoomCards = {};
+            unusedCards.forEach((card, index) => {
+              const roomId = shuffledRooms[index % shuffledRooms.length];
+              secretRoomCards[roomId] = card.ID;
+            });
+        
+            localStorage.setItem("secretRoomCards", JSON.stringify(secretRoomCards));
+            localStorage.setItem("revealedSecretCards", JSON.stringify({}));
+          });
         });
 
         function resetDiceState() {
@@ -1916,6 +1971,9 @@
                 // Проверка комнаты и кнопок
                 const cellId = matrix[playerPos.y][playerPos.x];
                 const cellType = cells[cellId]?.type;
+                if (cellType === "room") {
+                    checkSecretRoomCard(cells[cellId].RoomName);
+                }
                 if (cellType === "room") {
                     rollDiceButton.disabled = true;
                     rollDiceButton.style.display = "none";
