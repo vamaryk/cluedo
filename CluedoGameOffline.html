@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Прототип поля Cluedo</title>
+    <title>Cluedo</title>
     <style>
         body {
             background: #f5f5f5;
@@ -760,10 +760,10 @@
 
         // Фиксированные фишки (ID) начальные позиции для ботов
         let bots = [
-            { id: 1, name: "Надира", x: 10, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
-            { id: 2, name: "Эмине", x: 16, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
-            { id: 3, name: "Орхан", x: 25, y: 7, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false },
-            { id: 4, name: "Малхун", x: 1, y: 17, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false }
+            { id: 1, name: "Надира", x: 10, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 2, name: "Эмине", x: 16, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 3, name: "Орхан", x: 25, y: 7, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 4, name: "Малхун", x: 1, y: 17, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false }
         ];
 
         const playersInfo = [
@@ -1355,6 +1355,12 @@
             }, duration);
         }
 
+        function pickUnknownCard(cards, knownCards) {
+            const unknown = cards.filter(c => !knownCards.includes(c.ID));
+            if (unknown.length === 0) return cards[Math.floor(Math.random() * cards.length)];
+            return unknown[Math.floor(Math.random() * unknown.length)];
+        }
+
         async function botMakeSuggestion(bot) {
             const cellId = matrix[bot.y][bot.x];
             const cell = cells[cellId];
@@ -1369,8 +1375,8 @@
             const weapons = await loadCardsByType('Weapon');
         
             // Выбор
-            const character = characters[Math.floor(Math.random() * characters.length)];
-            const weapon = weapons[Math.floor(Math.random() * weapons.length)];
+            const character = pickUnknownCard(characters, bot.knownCards);
+            const weapon = pickUnknownCard(weapons, bot.knownCards);
 
             // Проверяет, чтобы бот не выбирал свою карту
             const playerCards = await loadCardsByType('Character'); // или свои карты бота
@@ -1406,13 +1412,13 @@
         } else {
             const owner = playersInfo.find(p => p.id === parseInt(result.playerID));
             showNotification(`✅ ${owner?.label || "Игрок"} показал карту`, "success");
-        }
+            }
         }
         
         function botHasCard(botID, cardID) {
             const bot = bots.find(b => b.id === botID);
-            if (!bot || !bot.cards) return false;
-            return bot.cards.includes(cardID);
+            if (!bot || !bot.knownCards) return false;
+            return bot.knownCards.includes(cardID);
         }
 
         async function botShouldAccuse(bot) {
@@ -1484,29 +1490,54 @@
             return;
         }
 
+        // Использование тайного хода
+        if (bot.pendingSecret) {
+            bot.pendingSecret = false;
+        
+            if (botUseSecretPath(bot)) {
+                // После тайного хода — предположение и конец хода
+                botMakeSuggestion(bot).then(() => {
+                    isBotMoving = false;
+                    setTimeout(finishBotTurn, 3200);
+                });
+                return;
+            }
+        }
+
         // Увеличивает счётчик ходов
         bot.turnsPlayed = (bot.turnsPlayed || 0) + 1;
 
-        // ПРОВЕРКА ОБВИНЕНИЯ
         botShouldAccuse(bot).then(shouldAccuse => {
-            if (shouldAccuse) {
-                botMakeAccusation(bot).then(() => {
-                    finishBotTurn();
-                });
+
+        const cellId = matrix[bot.y][bot.x];
+        const cell = cells[cellId];
+        const isInRoom = cell && cell.type === "room";
+
+        if (shouldAccuse && !isInRoom) {
+        botMakeAccusation(bot).then(() => {
+            isBotMoving = false;
+            finishBotTurn();
+            return;
+        });
             } else {
-                // обычный ход
-                startBotMovement(bot);
+                moveStep();
             }
         });
 
-    // Бросок кубиков для бота
-    let currentStep = 0;
-    bot.steps = Math.floor(Math.random() * 6 + 1) + Math.floor(Math.random() * 6 + 1);
 
-    // Обновляет статус хода
-    document.getElementById("turnStatus").innerText = `Ход: ${bot.name}`;
+        // Бросок кубиков для бота
+        let currentStep = 0;
+        bot.steps = Math.floor(Math.random() * 6 + 1) + Math.floor(Math.random() * 6 + 1);
 
-    function moveStep() {
+        // Обновляет статус хода
+        document.getElementById("turnStatus").innerText = `Ход: ${bot.name}`;
+
+        function moveStep() {
+           if (bot.eliminated) {
+                isBotMoving = false;
+                finishBotTurn();
+                return;
+            }
         if (currentStep < bot.steps) {
         const newPos = pathfindingMove(bot);
 
@@ -1522,18 +1553,17 @@
 
         if (cell && cell.type === "room" && !bot.inRoom) {
             isBotMoving = false;
+            bot.inRoom = true;
         
-            bot.inRoom = true; 
-        
-            bot.visitedRooms = bot.visitedRooms || [];
             if (!bot.visitedRooms.includes(cell.RoomName)) {
                 bot.visitedRooms.push(cell.RoomName);
             }
+
+            bot.pendingSecret = true; // 👈 ВАЖНО
         
             botMakeSuggestion(bot).then(() => {
-                setTimeout(finishBotTurn, 1200);
+                setTimeout(finishBotTurn, 3200);
             });
-
             return;
         }
 
@@ -1555,7 +1585,7 @@
         
             // После тайного хода ОБЯЗАТЕЛЬНО предположение
             botMakeSuggestion(bot).then(() => {
-                setTimeout(finishBotTurn, 1200);
+                setTimeout(finishBotTurn, 3200);
             });
         
                 } else {
@@ -1563,7 +1593,6 @@
                                 }
                         }
                 }
-            moveStep();
         }
 
         function finishBotTurn() {
