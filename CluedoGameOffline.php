@@ -15,6 +15,17 @@
             position: relative;
         }
 
+        h3 {
+            display: block;
+            font-size: 1.17em;
+            margin-block-start: 0;
+            margin-block-end: 10px;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-weight: bold;
+            unicode-bidi: isolate;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(27, 27px);
@@ -298,8 +309,8 @@
         }
 
         .card-item {
-            width: 140px;      
-            height: 190px;     
+            width: 120px;      
+            height: 170px;     
             display: flex;
             flex-direction: column;
             align-items: center;
