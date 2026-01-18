@@ -161,14 +161,7 @@ $avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
         <!-- Правая панель -->
         <div class="right-panel">
             <h2>созданная комната</h2>
-            <div class="room-info">
-                <p style="text-align: center; margin-top: 10px;">Хроники Улик</p>
-                <div class="room-cont">
-                    <p><strong>Доступ:</strong> открытый</p>
-                    <p><strong>Кол-во игроков:</strong> 4</p>
-                    <p><strong>Подключено:</strong> 0</p>
-                </div>
-            </div>
+            <div id="myRoomContainer"></div>
 
             <h2>друзья</h2>
             <div class="friends-list">
@@ -205,7 +198,6 @@ $avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
         };
 
         // --- Функционал загрузки аватара ---
-
         document.getElementById('avatarUpload').addEventListener('change', function() {
             if (this.files.length > 0) {
                 uploadAvatar(this.files[0]);
@@ -236,6 +228,41 @@ $avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
                 }
             });
         }
+
+
+        // Загрузка данных для карточки комнат пользователя
+        async function loadMyRoom() {
+            try {
+                const res = await fetch('getMyRoom.php');
+                const data = await res.json();
+
+                const container = document.getElementById('myRoomContainer');
+
+                if (!data.exists) {
+                    container.innerHTML = '<p style="margin: 50px; color: #f2f2f2;">Нет активной комнаты</p>';
+                    return;
+                }
+
+                const roomHTML = `
+                    <div class="room-info" style="cursor: pointer;" onclick="window.location.href='lobby.php?gameID=${data.gameID}'">
+                        <p style="text-align: center; margin-top: 10px;">${data.name}</p>
+                        <div class="room-cont">
+                            <p><strong>Доступ:</strong> ${data.privacy}</p>
+                            <p><strong>Кол-во игроков:</strong> ${data.currentPlayers}/${data.maxPlayers}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = roomHTML;
+
+            } catch (e) {
+                console.error('Ошибка загрузки комнаты:', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMyRoom();
+            setInterval(loadMyRoom, 5000);
+        });
     </script>
 </body>
 </html>

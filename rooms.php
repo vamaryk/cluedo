@@ -33,7 +33,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Игровые комнаты | Cluedo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +43,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <div class="gradient"></div>
-    <!-- <audio id="background-music" src="./audio/background-music.mp3" loop></audio> -->
 
     <nav class="navbar navbar-expand-lg navbar-light rounded-[20px] p-3">
         <div class="container-fluid">
@@ -86,22 +85,11 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Панель комнат -->
     <div class="rooms-panel">
 
-        <!-- Фильтры -->
+        <!-- Поиск -->
         <div class="filters-container">
             <input type="text" id="searchInput" class="search-input" placeholder="поиск...">
-            <!-- <select id="privacyFilter" class="filter-select">
-                <option value="">Любая приватность</option>
-                <option value="Open">Публичные</option>
-                <option value="Closed">Приватные</option>
-            </select> -->
-            <!-- <select id="playersFilter" class="filter-select">
-                <option value="">Любое кол-во игроков</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
-                <option value="5">5</option>
-            </select> -->
             <button class="create-room-btn" data-bs-toggle="modal" data-bs-target="#createRoomModal">
-                <i class="fa-solid fa-plus"></i> создать комнату
+                <!-- <i class="fas fa-plus"></i> --> создать комнату
             </button>
         </div>
 
@@ -138,7 +126,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="modal-content" style="border-radius: 20px; padding: 20px; background: #fafafa; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title w-100 text-center" style="color: #2c3e50; font-weight: bold; font-size: 1.3em; letter-spacing: 1px;">создание комнаты</h5>
-                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 1.5em; color: #999;"></button> -->
                 </div>
                 <div class="modal-body pt-3">
                     <form id="createRoomForm">
@@ -149,7 +136,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 style="border: 1px solid #ddd; border-radius: 12px; padding: 10px; font-size: 14px; background: white;">
                         </div>
 
-                        <!-- Доступ: открытый / закрытый -->
+                        <!-- Доступ открытый/закрытый -->
                         <div class="mb-3">
                             <label class="d-block mb-2" style="font-size: 14px; color: #2c3e50; font-weight: 500;">доступ</label>
                             <div class="d-flex gap-3 align-items-center">
@@ -164,7 +151,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
 
-                        <!-- Код доступа (пароль) -->
+                        <!-- Код доступа -->
                         <div class="mb-3 password-field d-none">
                             <input type="password" name="password" class="form-control" placeholder="код доступа" 
                                 style="border: 1px solid #ddd; border-radius: 12px; padding: 10px; font-size: 14px; background: white;">
@@ -225,7 +212,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 
 
@@ -281,9 +268,6 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
             btn.addEventListener('click', () => {
                 selectedRoomID = btn.dataset.id;
                 if (btn.dataset.privacy === 'Closed') {
-                    // document.getElementById('passwordModal').style.display = 'block';
-                    // const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal'));
-                    // modal.show();
                     const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal'));
                     modal.show();
                 } else {
@@ -323,20 +307,10 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function filterRooms() {
             const searchInput = document.getElementById('searchInput');
             if (!searchInput) return;
-
             const search = searchInput.value.toLowerCase();
-            // const privacy = document.getElementById('privacyFilter')?.value || '';
-            // const minPlayers = parseInt(document.getElementById('playersFilter')?.value) || 0;
 
             document.querySelectorAll('#roomsList .room-card').forEach(card => {
                 const name = card.dataset.name || '';
-                // const roomPrivacy = card.dataset.privacy || '';
-                // const players = parseInt(card.dataset.players) || 0;
-
-                // const matches = name.includes(search) &&
-                //             (!privacy || roomPrivacy === privacy) &&
-                //             players >= minPlayers;
-
                 card.style.display = name.includes(search) ? 'block' : 'none';
             });
         }
@@ -346,9 +320,67 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (searchInput) {
             searchInput.addEventListener('input', filterRooms);
         }
-        // document.getElementById('searchInput').addEventListener('input', filterRooms);
-        // document.getElementById('privacyFilter').addEventListener('change', filterRooms);
-        // document.getElementById('playersFilter').addEventListener('change', filterRooms);
+
+        // Функция для обновления списка комнат (AJAX)
+        function renderRooms(rooms) {
+            const container = document.getElementById('roomsList');
+            if (rooms.length === 0) {
+                container.innerHTML = '<div class="empty-message">Нет активных комнат. Создайте свою!</div>';
+                return;
+            }
+
+            let html = '';
+            rooms.forEach(room => {
+                const isPrivate = room.GamePrivacy === 'Closed';
+                html += `
+                    <div class="room-card"
+                        data-privacy="${room.GamePrivacy}"
+                        data-players="${room.currentPlayers}"
+                        data-name="${room.GameName.toLowerCase()}">
+                        <div class="room-title">${room.GameName}</div>
+                        <div class="room-stats">
+                            <span class="stat-item">Кол-во игроков: ${room.currentPlayers}/${room.GamePlayersAmount}</span>
+                            <span class="stat-item privacy-badge ${isPrivate ? 'private' : 'public'}">
+                                ${isPrivate ? 'закрытый' : 'открытый'}
+                            </span>
+                        </div>
+                        <button class="join-btn" data-id="${room.gameID}" data-privacy="${room.GamePrivacy}">
+                            Присоединиться
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Повторно добавление обработчиков на новые кнопки
+            document.querySelectorAll('.join-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedRoomID = btn.dataset.id;
+                    if (btn.dataset.privacy === 'Closed') {
+                        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal'));
+                        modal.show();
+                    } else {
+                        joinRoom(selectedRoomID, null);
+                    }
+                });
+            });
+        }
+
+        // Автообновление списка комнат
+        async function fetchRooms() {
+            try {
+                const res = await fetch('getRooms.php');
+                const rooms = await res.json();
+                renderRooms(rooms);
+            } catch (e) {
+                console.error('Не удалось обновить список комнат:', e);
+            }
+        }
+
+        // Первый запуск + интервал
+        fetchRooms();
+        setInterval(fetchRooms, 3000); // каждые 3 секунды
     });
 </script>
 </body>

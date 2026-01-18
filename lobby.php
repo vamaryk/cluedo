@@ -27,8 +27,9 @@ if (!$stmt->fetch()) {
 <head>
     <meta charset="UTF-8">
     <title>Лобби | Cluedo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.3.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -149,7 +150,7 @@ if (!$stmt->fetch()) {
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
-                        <a class="nav-link current" href="lobby.php"><i class="fa fa-home"></i> комнаты</a>
+                        <a class="nav-link current" href="rooms.php"><i class="fa fa-home"></i> комнаты</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Ссылки для авторизованных пользователей -->
@@ -179,7 +180,7 @@ if (!$stmt->fetch()) {
     </nav>
 
     <div class="container py-4">
-        <h2 id="roomName" class="text-center mb-4">Загадочный особняк</h2>
+        <h2 id="roomName" class="text-center mb-4"></h2>
 
         <!-- Таймер (заглушка) -->
         <div class="text-center mb-4">
@@ -192,7 +193,7 @@ if (!$stmt->fetch()) {
 
         <div class="d-flex flex-column align-items-center gap-3">
             <button id="startGameBtn" class="lobby-btn-success w-75 d-none">
-                Начать игру
+                <a style="text-decoration: none; color: #2c3e50" href="CluedoGameOffline.php">Начать игру</a>
             </button>
             <button id="leaveBtn" class="lobby-btn-danger w-75">
                 Выйти
@@ -288,24 +289,24 @@ if (!$stmt->fetch()) {
         }
 
         // Начать игру
-        document.getElementById('startGameBtn').addEventListener('click', async () => {
-            if (!confirm('Вы уверены, что хотите начать игру?')) return;
-            try {
-                const res = await fetch('./online/startGame.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ gameID })
-                });
-                const result = await res.json();
-                if (result.error) {
-                    alert('Ошибка: ' + result.error);
-                } else {
-                    window.location.href = `./online/CluedoGameOnline.php?gameID=${gameID}`;
-                }
-            } catch (e) {
-                alert('Ошибка запуска: ' + e.message);
-            }
-        });
+        // document.getElementById('startGameBtn').addEventListener('click', async () => {
+        //     if (!confirm('Вы уверены, что хотите начать игру?')) return;
+        //     try {
+        //         const res = await fetch('./online/startGame.php', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({ gameID })
+        //         });
+        //         const result = await res.json();
+        //         if (result.error) {
+        //             alert('Ошибка: ' + result.error);
+        //         } else {
+        //             window.location.href = `./online/CluedoGameOnline.php?gameID=${gameID}`;
+        //         }
+        //     } catch (e) {
+        //         alert('Ошибка запуска: ' + e.message);
+        //     }
+        // });
 
         // Открытие модального окна
         document.getElementById('leaveBtn').addEventListener('click', () => {

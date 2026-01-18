@@ -504,13 +504,6 @@ form {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-
-
-
-
-
-
-
 /* Стили для панели профиля */
 .profile-container {
     display: flex;
@@ -601,9 +594,18 @@ form {
     font-size: 14px;
     color: #333;
 }
+
+.room-info:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 .room-cont {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin: 0 30px;
 }
 
