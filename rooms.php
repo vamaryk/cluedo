@@ -34,17 +34,11 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Игровые комнаты | Cluedo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        /* .room-card { border-left: 4px solid #6f42c1; }
-        .private-badge { background-color: #dc3545; }
-        .public-badge { background-color: #28a745; } */
-    </style>
 </head>
 
 <body>
@@ -60,7 +54,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
-                        <a class="nav-link current" href="redirectToGame.php"><i class="fa fa-home"></i> комнаты</a>
+                        <a class="nav-link current" href="rooms.php"><i class="fa fa-home"></i> комнаты</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Ссылки для авторизованных пользователей -->
@@ -107,7 +101,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <option value="5">5</option>
             </select> -->
             <button class="create-room-btn" data-bs-toggle="modal" data-bs-target="#createRoomModal">
-                <i class="fas fa-plus"></i> создать комнату
+                <i class="fa-solid fa-plus"></i> создать комнату
             </button>
         </div>
 

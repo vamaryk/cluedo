@@ -103,7 +103,7 @@ $avatar_src = htmlspecialchars($user['AvatarURL'] ?? 'default-avatar.png');
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
-                        <a class="nav-link" href="redirectToGame.php"><i class="fa fa-home"></i> комнаты</a>
+                        <a class="nav-link" href="rooms.php"><i class="fa fa-home"></i> комнаты</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Ссылки для авторизованных пользователей -->

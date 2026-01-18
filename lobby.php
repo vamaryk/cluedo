@@ -28,7 +28,7 @@ if (!$stmt->fetch()) {
     <meta charset="UTF-8">
     <title>Лобби | Cluedo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.3.0/css/font-awesome.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -149,7 +149,7 @@ if (!$stmt->fetch()) {
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
-                        <a class="nav-link current" href="redirectToGame.php"><i class="fa fa-home"></i> комнаты</a>
+                        <a class="nav-link current" href="lobby.php"><i class="fa fa-home"></i> комнаты</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Ссылки для авторизованных пользователей -->
@@ -243,7 +243,15 @@ if (!$stmt->fetch()) {
                     return;
                 }
 
+                // Если игра уже запущена --- переходим в CluedoGameOnline.php
+                if (data.game.GameStatus === 'InProgress') {
+                    window.location.href = `online/CluedoGameOnline.php?gameID=${gameID}`;
+                    return;
+                }
+
+                // Обновляем только если игра в Waiting
                 document.getElementById('roomName').textContent = data.game.GameName;
+                
                 isHost = data.isHost;
 
                 // Обновление списка игроков
@@ -283,7 +291,7 @@ if (!$stmt->fetch()) {
         document.getElementById('startGameBtn').addEventListener('click', async () => {
             if (!confirm('Вы уверены, что хотите начать игру?')) return;
             try {
-                const res = await fetch('startGame.php', {
+                const res = await fetch('./online/startGame.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ gameID })
@@ -292,7 +300,7 @@ if (!$stmt->fetch()) {
                 if (result.error) {
                     alert('Ошибка: ' + result.error);
                 } else {
-                    window.location.href = `game.php?gameID=${gameID}`;
+                    window.location.href = `./online/CluedoGameOnline.php?gameID=${gameID}`;
                 }
             } catch (e) {
                 alert('Ошибка запуска: ' + e.message);
