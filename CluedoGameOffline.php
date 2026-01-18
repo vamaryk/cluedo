@@ -588,10 +588,10 @@
               <td colspan="5"></td>
             </tr>
             <tr data-card-id="1"><td>Надира</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="2"><td>Эмине</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="3"><td>Орхан</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="4"><td>Малхун</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr data-card-id="5"><td>Шахризар</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td>Орудия:</td><td colspan="5"></td></tr>
             <tr data-card-id="6"><td>Кинжал Джамбия</td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr data-card-id="7"><td>Наргиле</td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -874,20 +874,27 @@
 
         // Отображение кнопки для тайного хода
         function showSecretPathButton() {
-            if (!isGameStarted || currentPlayer !== "player") {
+            if (
+                !isGameStarted ||
+                currentPlayer !== "player" ||
+                isDiceDone // 🔥 ВАЖНО
+            ) {
                 secretPathButton.style.display = "none";
                 return;
             }
+        
             const cellId = matrix[playerPos.y][playerPos.x];
-            const cell = cells[cellId];
-            // Проверка, связана ли текущая клетка с потайным ходом
             for (let path in secretPaths) {
-                if (secretPaths[path].from.x === playerPos.x && secretPaths[path].from.y === playerPos.y) {
+                if (
+                    secretPaths[path].from.x === playerPos.x &&
+                    secretPaths[path].from.y === playerPos.y
+                ) {
                     secretPathButton.style.display = "inline-block";
                     return;
                 }
             }
-            secretPathButton.style.display = "none"; // Если не нашли соответствующей клетки — скрыть кнопку
+
+            secretPathButton.style.display = "none";
         }
 
         // Функция секретного прохода
@@ -902,15 +909,15 @@
                     showSecretPathButton(); // Проверка, нужно ли показывать кнопку для тайного хода
                     setTimeout(() => {
                         resetDiceState();
-                        currentPlayer = "bot";
-                        suggestButton.style.display = "none";
-                        secretPathButton.style.display = "none";
-                        endTurnButton.style.display = "none";
-                        accuseButton.style.display = "none";
                         rollDiceButton.style.display = "none";
+                        rollDiceButton.disabled = true;
+                        secretPathButton.style.display = "none";
+                        showSuggestButton();
+                        endTurnButton.style.display = "inline-block";
+                        accuseButton.style.display = "inline-block";
+                        gamePhase = GamePhase.PLAYER_TURN;
+                        currentPlayer = "player";
                         saveGameState();
-                        gamePhase = GamePhase.BOT_TURN;
-                        setTimeout(botMove, 300);
                     }, 5); // небольшая задержка, чтобы игрок успел увидеть перемещение
                     return;
                 }
@@ -1106,6 +1113,7 @@
                 } catch (error) {
                     console.error("Ошибка:", error);
                 }
+                isDiceDone = false;
                 rollDiceButton.style.display = "none";
                 endTurnButton.style.display = "none";
                 accuseButton.style.display = "none";
@@ -1295,6 +1303,41 @@
             }
 
             return false; // Если клетка свободна
+        }
+
+        function checkSecretRoomCard(roomId) {
+            const secretRoomCards =
+                JSON.parse(localStorage.getItem("secretRoomCards")) || {};
+            const revealed =
+                JSON.parse(localStorage.getItem("revealedSecretCards")) || {};
+        
+            const cardId = secretRoomCards[roomId];
+            if (!cardId || revealed[cardId]) return;
+        
+            // Помечает как открытую
+            revealed[cardId] = true;
+            localStorage.setItem(
+                "revealedSecretCards",
+                JSON.stringify(revealed)
+            );
+
+            // Получает данные карты (из общего списка)
+            const cardRow = document.querySelector(
+                `tr[data-card-id="${cardId}"]`
+            );
+            if (!cardRow) return;
+
+            const cardName =
+                cardRow.querySelector("td:first-child").textContent.trim();
+
+            showNotification(
+                `🎁 В комнате вы нашли карту: «${cardName}»`,
+                "success",
+                7000
+            );
+
+            // Автоматически отмечает как карту игрока
+            markKnownCard(playerID, cardName);
         }
 
         function showNotification(text, type = "info", duration = 4500) {
@@ -1681,6 +1724,7 @@
         clearNotebook();
         playerCards.style.display = "none"; // Скрывает карты игрока
         startButton.style.display = "none";
+        resetDiceState();
         rollDiceButton.style.display = "inline-block";
         endTurnButton.style.display = "inline-block";
         playerCards.style.display = "inline-block";
@@ -1719,6 +1763,25 @@
         showSecretPathButton();
         showAccuseButton();
         saveGameState();
+        fetch('getUnusedCards.php')
+          .then(res => res.json())
+          .then(data => {
+            if (!data.success || !data.unusedCards.length) return;
+        
+            const unusedCards = data.unusedCards;
+        
+            const roomIds = Object.keys(roomIdToName);
+            const shuffledRooms = roomIds.sort(() => Math.random() - 0.5);
+        
+            const secretRoomCards = {};
+            unusedCards.forEach((card, index) => {
+              const roomId = shuffledRooms[index % shuffledRooms.length];
+              secretRoomCards[roomId] = card.ID;
+            });
+        
+            localStorage.setItem("secretRoomCards", JSON.stringify(secretRoomCards));
+            localStorage.setItem("revealedSecretCards", JSON.stringify({}));
+          });
         });
 
         function resetDiceState() {
@@ -1740,6 +1803,7 @@
             if (currentPlayer === "player") {
                 // Игрок завершил ход
                 resetDiceState();
+                isDiceDone = false;
                 currentBot = 0; 
                 currentPlayer = "bot"; // Следующий ход - первый бот
                 accuseButton.style.display = "none";
@@ -1781,6 +1845,7 @@
 
         let diceSum = 0;
         let possibleMoves = [];
+        isDiceDone = false;
         let isDiceRolled = false; // Флаг, что кости подброшены
         let isPlayerTurn = false; // Флаг, что сейчас ход игрока
 
@@ -1799,6 +1864,7 @@
 
             highlightPossibleMoves(diceSum);
             isDiceRolled = true;
+            isDiceDone = true;
             rollDiceButton.disabled = true;
         });
 
@@ -1906,6 +1972,11 @@
                 const cellId = matrix[playerPos.y][playerPos.x];
                 const cellType = cells[cellId]?.type;
                 if (cellType === "room") {
+                    checkSecretRoomCard(cells[cellId].RoomName);
+                }
+                if (cellType === "room") {
+                    rollDiceButton.disabled = true;
+                    rollDiceButton.style.display = "none";
                     showSuggestButton();
                 } else {
                     if (currentPlayer === "player") {
@@ -2162,6 +2233,14 @@
                 }
             });
         }
+
+        [suggestModal, accuseModal, modal].forEach(m => {
+            m.addEventListener("click", (e) => {
+                if (e.target === m) {
+                    m.style.display = "none";
+                }
+            });
+        });
 
         renderBoard();
         initNotebookHeader();
