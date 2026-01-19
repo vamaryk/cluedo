@@ -1,0 +1,12 @@
+        const board = document.getElementById("board");
+        const suggestButton = document.getElementById("suggestButton");
+        const secretPathButton = document.getElementById("secretPathButton");
+        const startButton = document.getElementById("startButton");
+        const endTurnButton = document.getElementById("endTurnButton");
+        const modal = document.getElementById("modal");
+        const modalButton = document.getElementById("modalButton");
+        const playerCards = document.getElementById("playerCards");
+        const accuseButton = document.getElementById("accuseButton");
+        const suggestModal = document.getElementById("suggestModal");
+        const suggestModalButton = document.getElementById("suggestModalButton");
+        const endGameButton = document.getElementById("endGameButton");
