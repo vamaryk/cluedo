@@ -13,6 +13,10 @@
             align-items: center;
             margin: 20px;
             position: relative;
+            background-image: url('./img/Background.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
         }
 
         h3 {
@@ -30,46 +34,73 @@
             display: grid;
             grid-template-columns: repeat(27, 27px);
             grid-template-rows: repeat(27, 27px);
-            /* gap: 1px; */
-            background-color: black;
-            padding: 1px;
+        
+            background: 
+                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.15)),
+                url('./img/map-texture.jpg'); /* позже подложишь */
+            background-size: cover;
+        
+            padding: 12px;
+            border-radius: 18px;
+        
+            box-shadow:
+                0 20px 40px rgba(0,0,0,0.45),
+                inset 0 0 0 3px rgba(255, 215, 160, 0.4);
+        
+            position: relative;
         }
-
+        
         .cell {
             width: 27px;
             height: 27px;
-            background: #ccc;
+            background: rgba(255, 248, 220, 0.85);
+            border: none;
+        
+            box-shadow:
+                inset 0 0 0 1px rgba(120, 90, 60, 0.25),
+                inset 0 -1px 2px rgba(0,0,0,0.2);
+        
+            box-sizing: border-box;
+        }
+        
+        .empty {
+            background: transparent;
+        }
+        
+        .walkable {
+            background: rgba(240, 220, 180, 0.9);
+        }
+
+        .room,
+        .blocked {
+            background: rgba(180, 180, 180, 0.9);
+            box-shadow:
+                inset 0 0 0 2px rgba(90,90,90,0.4);
+        }
+        
+        .player {
+            position: relative; 
+        }
+        
+        .player::after {
+            content: attr(data-token);
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(145deg, #d6b26a, #a67c3a); 
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            /* border-radius: 6px; */
-            box-sizing: border-box;
-            border: 1px solid #000;
-        }
-
-        .empty {
-            background: #3CB371;
-            border: none;
-        }
-
-        .walkable {
-            background: #F4A460;
-        }
-
-        .blocked {
-            background: #C0C0C0;
-        }
-
-        .room {
-            background: #C0C0C0;
-            border: none;
-        }
-
-        .player {
-            background: #444;
-            color: #fff;
-            /* border: 3px solid #5c4033; */
+            color: #2b1c08;
+            
+            box-shadow: 
+                0 0 15px rgba(255, 215, 0, 0.8),
+                0 2px 5px rgba(0,0,0,0.5), 
+                inset 0 1px 1px rgba(255,255,255,0.3);
+                
+            border: 2px solid #5c4033;
+            z-index: 1;
             font-weight: bold;
         }
 
@@ -89,27 +120,51 @@
             border-left: 3px solid #5c4033;
         }
 
-        /* Кнопка предположения */
+        button,
+        .action-button {
+            font-family: inherit;
+            background:
+                linear-gradient(180deg, #d6b26a, #a67c3a);
+        
+            color: #2b1c08;
+            border: 2px solid #5c4033;
+        
+            border-radius: 999px;
+            padding: 10px 18px;
+        
+            box-shadow:
+                0 6px 12px rgba(0,0,0,0.4),
+                inset 0 2px 3px rgba(255,255,255,0.4);
+        
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                0 8px 16px rgba(0,0,0,0.5),
+                inset 0 2px 3px rgba(255,255,255,0.4);
+        }
+        
         #suggestButton {
             position: fixed;
-            bottom: 18px;
+            bottom: 20px;
             right: 230px;
-            padding: 10px 10px;
-            font-size: 18px;
-            cursor: pointer;
+            padding: 10px 18px; 
+            font-size: 16px;  
             display: none;
-            background-color: #27ae60;
-            color: white;
-            border: 2px solid #228B22;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, transform 0.3s;
         }
-
-        /* При наведении на кнопку */
+        
         #suggestButton:hover {
-            background-color: #2ecc71;
             transform: scale(1.05);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        
+        #suggestButton {
+            border-radius: 8px; 
+            padding: 10px 18px; 
+            font-size: 16px; 
         }
 
         /* Модальное окно */
@@ -145,80 +200,44 @@
         /* Кнопка тайного хода */
         #secretPathButton {
             margin-top: 0px;
-            padding: 10px 20px;
+            /* padding: 10px 20px; */
             font-size: 16px;
-            cursor: pointer;
             display: none;
-            background-color: #8e44ad;
-            color: white;
-            border: 2px solid #9b59b6;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, transform 0.3s;
         }
-
-        /* При наведении на кнопку */
-        #secretPathButton:hover {
-            background-color: #9b59b6;
-            transform: scale(1.05);
-        }
-
-        /* Кнопка "Начать игру" */
+        
+        /* Кнопка "Начать игру" и "Завершить ход" */
         #startButton,
         #endTurnButton {
             margin-top: 10px;
-            padding: 15px 30px;
+            padding: 15px 30px; 
             font-size: 18px;
-            cursor: pointer;
             border-radius: 8px;
             border: none;
-            transition: background-color 0.3s, transform 0.3s;
-            text-align: center;
         }
-
-        /* Стиль для кнопки "Начать игру" */
-        #startButton {
-            background-color: #27ae60;
-            color: white;
-        }
-
-        #startButton:hover {
-            background-color: #2ecc71;
-            transform: scale(1.1);
-        }
-
-        /* Стиль для кнопки "Завершить ход" */
+        
         #endTurnButton {
-            margin-top: 10px;
-            background-color: #f39c12;
-            color: white;
             display: none;
         }
-
-        #endTurnButton:hover {
-            background-color: #e67e22;
-            transform: scale(1.1);
-        }
-
-        /* Тень для кнопок */
-        #startButton,
-        #endTurnButton {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
+        
         /* Отображение хода */
         #turnStatus {
-            margin-top: 5px;
-            font-size: 20px;
+            margin-top: 12px;
+        
+            font-size: 16px;
             font-weight: bold;
-            color: #333;
-            background-color: #f5f5f5;
-            padding: 10px 20px;
+        
+            background:
+                linear-gradient(180deg, rgba(245,235,210,0.95), rgba(220,200,160,0.95)),
+                url('./img/paper-texture.jpg');
+            background-size: cover;
+            padding: 6px 12px;
+        
             border-radius: 8px;
-            border: 2px solid #ddd;
-            display: inline-block;
-            transition: background-color 0.3s, transform 0.3s;
+            border: 1px solid rgba(120,90,50,0.4);
+        
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
         }
+
 
         /* Увеличение статуса при смене хода */
         #turnStatus {
@@ -230,13 +249,36 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 100;
+
+            background:
+                linear-gradient(180deg, rgba(245,235,210,0.95), rgba(220,200,160,0.95)),
+                url('./img/paper-texture.jpg');
+            background-size: cover;
+
+            padding: 16px 20px;
+            border-radius: 16px;
+
+            box-shadow:
+                0 16px 30px rgba(0,0,0,0.45),
+                inset 0 0 0 2px rgba(140,110,70,0.4);
+
+            color: #2f2a20;
             text-align: center;
-            font-family: sans-serif;
+        }
+
+        #dice .dice-face {
+            font-size: 34px;
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+        
+            background: #fffaf0;
+            border-radius: 8px;
+        
+            border: 2px solid rgba(120,90,50,0.6);
+            box-shadow:
+                inset 0 -2px 3px rgba(0,0,0,0.25),
+                0 3px 6px rgba(0,0,0,0.35);
         }
 
         #dice .dice-face {
@@ -264,66 +306,100 @@
 
         #rollDiceButton {
             margin-top: 10px;
-            padding: 8px 16px;
             font-size: 14px;
-            background-color: rgb(39, 174, 96);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
-
-        #rollDiceButton:hover {
-            background-color: rgb(80, 103, 85);
-        }
-
-        #rollDiceButton:disabled {
-            background-color: #999;
+        
+        button:disabled,
+        .action-button:disabled {
+            background: #ccc;
+            border-color: #999;
+            color: #666;
+            box-shadow: none;
             cursor: not-allowed;
+            transform: none;
+            filter: grayscale(1);
         }
 
         .cell.highlight {
-            background-color: rgb(255, 213, 0);
             cursor: pointer;
+    
+            background: #CFAA41;
+    
+            box-shadow: 
+                0 0 10px 4px rgba(255, 215, 0, 0.9),
+                inset 0 0 5px rgba(255, 255, 255, 0.5);
+    
+            animation: pulse 1s infinite alternate;
+        }
+
+        
+        @keyframes pulse {
+            from {
+                box-shadow: 0 0 10px 4px rgba(255, 215, 0, 0.9), inset 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px 6px rgba(255, 215, 0, 1), inset 0 0 8px rgba(255, 255, 255, 0.7);
+            }
         }
 
         #playerCards {
-            position: fixed; 
-            top: 20px;           
-            left: 20px;          
-            width: 150px;        
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        
+            width: 180px;
+            padding: 14px;
+        
+            background:
+                linear-gradient(180deg, rgba(90,60,30,0.85), rgba(50,30,15,0.95)),
+                url('./img/wood-texture.jpg');
+            background-size: cover;
+        
+            border-radius: 14px;
+        
+            box-shadow:
+                0 18px 35px rgba(0,0,0,0.5),
+                inset 0 0 0 2px rgba(255,220,160,0.25);
+        
+            color: #f3e6c8;
             text-align: center;
-            z-index: 100;        
         }
 
         #cardsContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;         
-            margin-top: 10px;
+            gap: 12px;
         }
 
         .card-item {
-            width: 120px;      
-            height: 170px;     
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;   
-            padding: 5px;
+            width: 115px;
+            height: 160px;
+        
+            background: #fff;
+            background: transparent;
+            border-radius: 10px;
+
+            box-shadow:
+                0 6px 14px rgba(0,0,0,0.45);
+
+            transform: rotate(var(--r, 0deg));
+            transition: transform 0.2s ease;
+        }
+
+        .card-item:nth-child(odd) { --r: -3deg; }
+        .card-item:nth-child(even) { --r: 3deg; }
+
+        .card-item:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 2;
         }
 
         .card-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 8px; /* Немного скруглим */
+            border-radius: 10px;
         }
 
         .modal {
@@ -373,33 +449,57 @@
         }
 
         .accuse-button {
-            background-color: #CD5C5C;
-            color: white;
             bottom: 18px;
             right: 10px;
+        
+            background: linear-gradient(180deg, #a33, #611);
+            color: #fff;
+            border-color: #3b0000;
+            
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
-
+        
         .accuse-button:hover {
             background-color: #FF4500;
             transform: scale(1.05);
         }
 
         #endGameButton {
-            padding: 10px 20px;
+            font-family: inherit;
             font-size: 18px;
-            cursor: pointer;
-            border: 2px solid #ff0000;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: #a20000;
-            transition: background-color 0.3s, transform 0.3s;
+            padding: 10px 20px;
             text-align: center;
             z-index: 10;
+
+            background: linear-gradient(180deg, #a33, #611);
+    
+            color: white;
+    
+            border: 2px solid #5c1a1a;
+    
+            border-radius: 999px;
+
+            box-shadow:
+                0 6px 12px rgba(0,0,0,0.4),
+                inset 0 2px 3px rgba(255,255,255,0.3);
+        
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         #endGameButton:hover {
-            background-color: #a40000;
-            transform: scale(1.05);
+            transform: translateY(-1px);
+            
+            background-color: #FF4500;
+            
+            box-shadow:
+                0 8px 16px rgba(0,0,0,0.5),
+                inset 0 2px 3px rgba(255,255,255,0.4);
+        }
+        
+        #endGameButton:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
 
         #notifications {
@@ -438,94 +538,96 @@
             position: fixed;
             top: 20px;
             bottom: 80px;
-            right: 0;
-            width: clamp(260px, 25vw, 480px);
-            background: #3CB371;
-            border-left: 1px solid #ccc;
-            box-shadow: -3px 0 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
+            right: 0px;
+        
+            width: clamp(280px, 28vw, 580px);
+        
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.85), rgba(235,225,200,0.9)),
+                url('./img/paper-texture.jpg');
+            background-size: cover;
+        
+            border-radius: 16px;
+        
+            box-shadow:
+                0 25px 45px rgba(0,0,0,0.45),
+                inset 0 0 0 2px rgba(140,110,70,0.4);
+        
+            padding: 14px 12px;
             box-sizing: border-box;
+        
             overflow-y: auto;
         }
 
-        /* Таблица занимает всю высоту контейнера */
         #cluedo-table {
             border-collapse: collapse;
             width: 100%;
-            /* max-width: 900px; */
             height: 100%;
-            table-layout: fixed;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+
+            font-size: 13px;
+            color: #2f2a20;
+        
             user-select: none;
-            font-size: 12px;
         }
-
-        #cluedo-table tr:not(:nth-child(2)):not(:nth-child(8)):not(:nth-child(14)) {
-            background-color: #f0f0f0;
-        }
-
-        /* Ячейки */
-        #cluedo-table td {
-            border: 1px solid #999;
-            /* background-color: #f0f0f0; */
-            text-align: center;
-            vertical-align: middle;
-            padding: 2px 4px;
-            cursor: pointer;
-            position: relative;
-            overflow-wrap: break-word;
-            height: calc(100% / 24);   /* равномерное распределение высоты по 24 строкам */
-        }
-
-        /* Заголовочные ячейки */
-        #cluedo-table td:first-child {
-            cursor: default;
+        
+        #cluedo-table td:first-child,
+        #cluedo-table tr:first-child td {
+            background: rgba(220,200,160,0.6);
             font-weight: bold;
-            background-color: #f0f0f0;
             text-align: left;
             padding-left: 6px;
-        }
-
-        #cluedo-table tr:first-child td {
             cursor: default;
-            font-weight: bold;
-            background-color: #f0f0f0;
+        }
+        
+        /* Ячейки */
+        #cluedo-table td {
+            border: 1px solid rgba(120,90,50,0.35);
+            background: rgba(255,255,255,0.6);
+        
+            text-align: center;
+            vertical-align: middle;
+            padding: 3px 4px;
+        
+            cursor: pointer;
+            position: relative;
+        
+            transition: background 0.15s ease;
         }
 
-        /* Метки */
-        .mark-cross::after {
-            content: "\2716";
-            color: red;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
+        #cluedo-table tr:nth-child(even) td {
+            background: rgba(250,245,235,0.8);
         }
 
-        .mark-check::after {
-            content: "\2714";
-            color: green;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-        }
-
+        .mark-cross::after,
+        .mark-check::after,
         .mark-question::after {
-            content: "\003F";
-            color: blue;
+            content: "✕";
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 16px;
+            
+            font-weight: bold;
+            font-size: 16px; 
+        }
+        
+        .mark-cross::after {
+            content: "✕";
+            color: #7a1e1e;
+        }
+        
+        .mark-check::after {
+            content: "✓";
+            color: #1f5f2e;
+        }
+        
+        .mark-question::after {
+            content: "?";
+            color: #3a4a7a;
+        }
+
+        #cluedo-table td:hover {
+            background: rgba(255,240,200,0.9);
         }
 
         .strikethrough {
@@ -771,18 +873,18 @@
 
         // Фиксированные фишки (ID) начальные позиции для ботов
         let bots = [
-            { id: 1, name: "Надира", x: 10, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
-            { id: 2, name: "Эмине", x: 16, y: 1, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
-            { id: 3, name: "Орхан", x: 25, y: 7, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
-            { id: 4, name: "Малхун", x: 1, y: 17, steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false }
+            { id: 1, name: "Надира", x: 10, y: 1, token: "", steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 2, name: "Эмине", x: 16, y: 1, token: "", steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 3, name: "Орхан", x: 25, y: 7, token: "", steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false },
+            { id: 4, name: "Малхун", x: 1, y: 17, token: "", steps: 0, visitedRooms: [], knownCards: [], turnsPlayed: 0, eliminated: false, pendingSecret: false }
         ];
 
         const playersInfo = [
-            { id: 1, label: "Игрок 1: Надира", icon: "🐪" },
-            { id: 2, label: "Игрок 2: Эмине", icon: "🐪" },
-            { id: 3, label: "Игрок 3: Орхан", icon: "🐪" },
-            { id: 4, label: "Игрок 4: Малхун", icon: "🐪" },
-            { id: 5, label: "Игрок 5: Шахризар", icon: "👳🏾‍" }
+            { id: 1, label: "Игрок 1: Надира", icon: "نادره" },
+            { id: 2, label: "Игрок 2: Эмине", icon: "آمنه" },
+            { id: 3, label: "Игрок 3: Орхан", icon: "اورخان" },
+            { id: 4, label: "Игрок 4: Малхун", icon: "مالحون" },
+            { id: 5, label: "Игрок 5: Шахризар", icon: "شهريزار‍" }
         ];
 
         function initNotebookHeader() {
@@ -2104,17 +2206,16 @@
 
                     if (playerPos.x === x && playerPos.y === y) {
                         div.classList.add("player");
-                        div.innerText = "👳🏾‍‍";
+                        // div.innerText = "";
                     }
 
                     // Боты
                     for (let i = 0; i < bots.length; i++) {
                         if (bots[i].x === x && bots[i].y === y) {
                             div.classList.add("player");
-                            div.innerText = "🐪";
+                            // div.innerText = bots[i].token;
                         }
                     }
-
                     board.appendChild(div);
                 }
             }
