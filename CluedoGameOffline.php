@@ -990,7 +990,7 @@
             if (
                 !isGameStarted ||
                 currentPlayer !== "player" ||
-                isDiceDone // 🔥 ВАЖНО
+                isDiceDone
             ) {
                 secretPathButton.style.display = "none";
                 return;
